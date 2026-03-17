@@ -32,3 +32,10 @@ async function run() {
 }
 
 run();
+
+async function connectDB() {
+  await client.connect();
+  return client.db('pet_prose');
+}
+
+module.exports = connectDB;
