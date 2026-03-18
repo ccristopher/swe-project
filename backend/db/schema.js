@@ -5,12 +5,16 @@ const userSchema = {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["username", "password", "email", "createdAt"],
+      required: ["clerkUserId", "createdAt"], 
       properties: {
-        username: { bsonType: "string", description: "must be a string and is required" },
-        password: { bsonType: "string", description: "must be a string and is required" },
-        email: { bsonType: "string", pattern: "^.+@.+$", description: "must be a valid email and is required" },
-        createdAt: { bsonType: "date", description: "must be a date" }
+        clerkUserId: { bsonType: "string" },
+        username: { bsonType: "string" },
+        email: { 
+          bsonType: "string", 
+          pattern: "^.+@.+$", 
+          description: "must be a valid email" 
+        },
+        createdAt: { bsonType: "date" }
       }
     }
   }

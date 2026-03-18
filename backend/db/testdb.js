@@ -8,7 +8,7 @@ async function testDB() {
   // Insert a test user
   const userResult = await users.insertOne({
     username: "rawan_test",
-    password: "hashedPassword123", //will implement clerk for password validation
+    password: "hashedPassword123", 
     email: "rawan_test@example.com",
     createdAt: new Date()
   });

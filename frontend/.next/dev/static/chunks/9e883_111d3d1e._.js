@@ -14182,7 +14182,7 @@ const CLERK_UI_VERSION = __TURBOPACK__imported__module__$5b$project$5d2f$fronten
 const API_VERSION = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.CLERK_API_VERSION || "v1";
 const SECRET_KEY = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.CLERK_SECRET_KEY || "";
 const MACHINE_SECRET_KEY = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.CLERK_MACHINE_SECRET_KEY || "";
-const PUBLISHABLE_KEY = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
+const PUBLISHABLE_KEY = ("TURBOPACK compile-time value", "pk_test_YWRqdXN0ZWQtY3Jhd2RhZC05MS5jbGVyay5hY2NvdW50cy5kZXYk") || "";
 const ENCRYPTION_KEY = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.CLERK_ENCRYPTION_KEY || "";
 const API_URL = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.CLERK_API_URL || (0, __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f40$clerk$2f$shared$2f$dist$2f$runtime$2f$apiUrlFromPublishableKey$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiUrlFromPublishableKey"])(PUBLISHABLE_KEY);
 const DOMAIN = __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_CLERK_DOMAIN || "";
@@ -14245,7 +14245,7 @@ const mergeNextClerkPropsWithEnv = (props)=>{
     var _a;
     return {
         ...props,
-        publishableKey: props.publishableKey || __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "",
+        publishableKey: props.publishableKey || ("TURBOPACK compile-time value", "pk_test_YWRqdXN0ZWQtY3Jhd2RhZC05MS5jbGVyay5hY2NvdW50cy5kZXYk") || "",
         __internal_clerkJSUrl: props.__internal_clerkJSUrl || __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_CLERK_JS_URL,
         __internal_clerkJSVersion: props.__internal_clerkJSVersion || __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_CLERK_JS_VERSION,
         __internal_clerkUIUrl: props.__internal_clerkUIUrl || __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_CLERK_UI_URL,
@@ -19257,11 +19257,32 @@ class Router {
                     return new Promise(()=>{});
                 }
                 const routerFilterSValue = ("TURBOPACK compile-time value", {
-                    "numItems": ("TURBOPACK compile-time value", 0),
+                    "numItems": ("TURBOPACK compile-time value", 1),
                     "errorRate": ("TURBOPACK compile-time value", 0.0001),
-                    "numBits": ("TURBOPACK compile-time value", 0),
-                    "numHashes": ("TURBOPACK compile-time value", null),
-                    "bitArray": ("TURBOPACK compile-time value", [])
+                    "numBits": ("TURBOPACK compile-time value", 20),
+                    "numHashes": ("TURBOPACK compile-time value", 14),
+                    "bitArray": ("TURBOPACK compile-time value", [
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 1),
+                        ("TURBOPACK compile-time value", 0),
+                        ("TURBOPACK compile-time value", 1)
+                    ])
                 });
                 if (!staticFilterData && routerFilterSValue) {
                     staticFilterData = ("TURBOPACK compile-time truthy", 1) ? routerFilterSValue : "TURBOPACK unreachable";

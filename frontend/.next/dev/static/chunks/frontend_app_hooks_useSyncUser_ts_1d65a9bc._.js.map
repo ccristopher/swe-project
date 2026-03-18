@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/rawanali/Documents/school%20content/swe-project/frontend/app/hooks/useSyncUser.ts"],"sourcesContent":["// frontend/app/hooks/useSyncUser.ts\n'use client'\n\nimport { useEffect } from 'react';\nimport { useUser } from '@clerk/nextjs';\n\nexport default function useSyncUser() {\n  const { isSignedIn } = useUser();\n\n  useEffect(() => {\n    if (isSignedIn) {\n      fetch('/api/users')\n        .then(res => res.json())\n        .then(data => console.log('User sync:', data));\n    }\n  }, [isSignedIn]);\n}"],"names":[],"mappings":";;;;AAGA;AACA;;AAJA,oCAAoC;AACpC;;;AAKe,SAAS;;IACtB,MAAM,EAAE,UAAU,EAAE,GAAG,IAAA,iMAAO;IAE9B,IAAA,sLAAS;iCAAC;YACR,IAAI,YAAY;gBACd,MAAM,cACH,IAAI;6CAAC,CAAA,MAAO,IAAI,IAAI;4CACpB,IAAI;6CAAC,CAAA,OAAQ,QAAQ,GAAG,CAAC,cAAc;;YAC5C;QACF;gCAAG;QAAC;KAAW;AACjB;GAVwB;;QACC,iMAAO"}}]
+}

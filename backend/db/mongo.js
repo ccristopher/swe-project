@@ -18,10 +18,18 @@ const client = new MongoClient(uri, {
   }
 });
 
+let db;
+
 async function connectDB() {
-  if (!client.isConnected?.()) await client.connect(); // connect if not already
-  return client.db('pet_n_prose');
+  if (!db) {
+    await client.connect();
+    db = client.db('pet_n_prose');
+    console.log("MongoDB connected");
+  }
+  return db;
 }
+
+module.exports = connectDB;
 
 async function testConnection() {
   try {
@@ -35,10 +43,9 @@ async function testConnection() {
     // List collections
     const collections = await db.listCollections().toArray();
     console.log("Collections:", collections.map(c => c.name));
+    console.log('Users collection:', usersCollection);
   } catch (err) {
     console.error("Connection failed:", err.message);
-  } finally {
-    await client.close();
   }
 }
 
