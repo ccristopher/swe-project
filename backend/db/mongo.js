@@ -1,4 +1,10 @@
-require('dotenv').config({ debug: true });
+const path = require('path');
+
+require('dotenv').config({
+  path: path.resolve(__dirname, '../.env'),
+  debug: true
+});
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 

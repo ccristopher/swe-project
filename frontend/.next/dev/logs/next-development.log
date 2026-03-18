@@ -1,0 +1,29 @@
+[00:00:00.491] Server  LOG     ✓ Ready in 313ms
+[00:06:01.381] Browser ERROR   Failed to fetch RSC payload for http://localhost:3000/. Falling back to browser navigation. {}
+[00:06:02.003] Server  LOG     
+
+[Clerk]: You are running in keyless mode.
+You can claim your keys by visiting https://dashboard.clerk.com/apps/claim?framework=nextjs&token=ig8hjj9knmldgr1mf3ozqo4lzomyuoii3hm88nt8&return_url=http%3A%2F%2Flocalhost%3A3000%2F
+
+[00:06:02.503] Server  ERROR   ⨯ Error: Clerk: clerkMiddleware() was not run, your middleware or proxy file might be misplaced. Move your middleware or proxy file to ./proxy.ts. Currently located at ./app/proxy.ts
+[00:06:02.507] Server  ERROR   ⨯ Error: Clerk: clerkMiddleware() was not run, your middleware or proxy file might be misplaced. Move your middleware or proxy file to ./proxy.ts. Currently located at ./app/proxy.ts
+[00:06:03.184] Browser ERROR   uncaughtError: Error: Clerk: clerkMiddleware() was not run, your middleware or proxy file might be misplaced. Move your middleware or proxy file to ./proxy.ts. Currently located at ./app/proxy.ts
+[00:06:03.705] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:07:21.713] Server  LOG       Reload env: .env.local
+[00:07:21.948] Server  ERROR   ⨯ Error: Clerk: clerkMiddleware() was not run, your middleware or proxy file might be misplaced. Move your middleware or proxy file to ./proxy.ts. Currently located at ./app/proxy.ts
+[00:07:21.952] Server  ERROR   ⨯ Error: Clerk: clerkMiddleware() was not run, your middleware or proxy file might be misplaced. Move your middleware or proxy file to ./proxy.ts. Currently located at ./app/proxy.ts
+[00:07:22.349] Browser ERROR   uncaughtError: Error: Clerk: clerkMiddleware() was not run, your middleware or proxy file might be misplaced. Move your middleware or proxy file to ./proxy.ts. Currently located at ./app/proxy.ts
+[00:07:22.800] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:08:59.185] Server  LOG     ✓ Compiled in 6ms
+[00:09:00.479] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:15:57.411] Server  LOG       Reload env: .env.local
+[00:15:57.933] Server  WARN    ⚠ Fast Refresh had to perform a full reload when ./frontend/node_modules/@clerk/nextjs/dist/esm/server/constants.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:15:58.116] Browser ERROR   Failed to fetch RSC payload for http://localhost:3000/. Falling back to browser navigation. {}
+[00:15:58.279] Server  LOG     
+
+[Clerk]: Your application is running with your claimed keys.
+You can safely remove the .clerk/ from your project.
+
+[00:15:59.730] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:22:43.540] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:23:38.673] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/frontend/app/globals.css"],"sourcesContent":["/* frontend/app/globals.css */\nbody {\n    margin: 0;\n    padding: 0;\n    font-family: var(--font-geist-sans), sans-serif;\n    background-color: #f9f9f9;\n  }"],"names":[],"mappings":"AACA"}}]
+}
