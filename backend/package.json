@@ -1,0 +1,15 @@
+{
+    "name": "backend",
+    "private": true,
+    "scripts": {
+      "start": "node server.js",
+      "dev": "nodemon server.js"
+    },
+    "dependencies": {
+      "dotenv": "^17.3.1",
+      "mongodb": "^6.21.0"
+    },
+    "devDependencies": {
+      "nodemon": "^3.0.2"
+    }
+  }

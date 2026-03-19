@@ -1,0 +1,33 @@
+[00:00:00.829] Server  LOG     ✓ Ready in 608ms
+[00:00:04.894] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:00:20.185] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:00:20.360] Server  LOG     [dotenv@17.3.1][DEBUG] No encoding is specified. UTF-8 is used by default
+[00:00:20.362] Server  LOG     [dotenv@17.3.1][DEBUG] Failed to load /ROOT/backend/.env ENOENT: no such file or directory, open '/ROOT/backend/.env'
+[00:00:20.362] Server  LOG     [dotenv@17.3.1] injecting env (0) from ../../../../../../ROOT/backend/.env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+[00:00:21.129] Server  ERROR   Error inserting user: MongoServerError: bad auth : Authentication failed.
+[00:00:21.234] Browser LOG     User synced to MongoDB: {"error":"bad auth : Authentication failed."}
+[00:05:58.663] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:06:25.448] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:06:25.663] Server  LOG     [dotenv@17.3.1][DEBUG] No encoding is specified. UTF-8 is used by default
+[00:06:25.664] Server  LOG     [dotenv@17.3.1][DEBUG] Failed to load /ROOT/backend/.env ENOENT: no such file or directory, open '/ROOT/backend/.env'
+[00:06:25.664] Server  LOG     [dotenv@17.3.1] injecting env (0) from ../../../../../../ROOT/backend/.env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+[00:06:26.406] Server  ERROR   Error inserting user: MongoServerError: bad auth : Authentication failed.
+[00:06:26.513] Browser LOG     User synced to MongoDB: {"error":"bad auth : Authentication failed."}
+[00:09:17.433] Browser ERROR   unhandledRejection: e: No session was found with id sess_3B8UuzYM8DiCP2Wn8RFOC5NjhN4
+[00:09:21.225] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:09:38.758] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:09:40.288] Server  ERROR   Error inserting user: MongoServerError: bad auth : Authentication failed.
+[00:09:40.394] Browser LOG     User synced to MongoDB: {"error":"bad auth : Authentication failed."}
+[00:10:21.908] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:10:37.926] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:10:39.255] Server  ERROR   Error inserting user: MongoServerError: bad auth : Authentication failed.
+[00:10:39.362] Browser LOG     User synced to MongoDB: {"error":"bad auth : Authentication failed."}
+[00:11:32.413] Server  LOG       Reload env: .env.local
+[00:11:33.472] Browser WARN    Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+[00:11:33.590] Server  LOG     [dotenv@17.3.1][DEBUG] No encoding is specified. UTF-8 is used by default
+[00:11:33.591] Server  LOG     [dotenv@17.3.1][DEBUG] Failed to load /ROOT/backend/.env ENOENT: no such file or directory, open '/ROOT/backend/.env'
+[00:11:33.591] Server  LOG     [dotenv@17.3.1] injecting env (0) from ../../../../../../ROOT/backend/.env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+[00:11:33.594] Server  LOG     USER: "rawan"
+[00:11:34.393] Server  LOG     MongoDB connected
+[00:11:34.698] Server  LOG     Inserted user: {}
+[00:11:34.849] Browser LOG     User synced to MongoDB: {"message":"User added","petId":"69bb1e886eae77e951fb6aee","userId":"69bb1e886eae77e951fb6aed"}

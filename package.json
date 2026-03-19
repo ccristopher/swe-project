@@ -1,7 +1,16 @@
 {
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
+    "@clerk/nextjs": "^7.0.5",
     "dotenv": "^17.3.1",
     "mongodb": "^6.21.0",
-    "node.js": "^0.0.1-security"
+    "node.js": "^0.0.1-security",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "typescript": "^5.9.3"
   }
 }
