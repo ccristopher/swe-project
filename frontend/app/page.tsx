@@ -23,7 +23,7 @@ export default function HomePage() {
           <div className="mt-10 flex w-full max-w-xl flex-col gap-4">
             <Show when="signed-out">
               <SignUpButton mode="modal">
-                <Button className="h-16 rounded-full bg-[image:var(--cta-gradient)] px-8 font-display text-xl font-bold text-primary-foreground shadow-[0_5px_0_0_var(--cta-shadow)] transition-transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                <Button className="h-16 rounded-full bg-(image:--cta-gradient) px-8 font-display text-xl font-bold text-primary-foreground shadow-[0_5px_0_0_var(--cta-shadow)] transition-transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
                   Get started
                   <ArrowRight className="size-5" />
                 </Button>
@@ -40,7 +40,7 @@ export default function HomePage() {
             </Show>
 
             <Show when="signed-in">
-              <Button className="h-16 rounded-full bg-[image:var(--cta-gradient)] px-8 font-display text-xl font-bold text-primary-foreground shadow-[0_5px_0_0_var(--cta-shadow)]">
+              <Button className="h-16 rounded-full bg-(image:--cta-gradient) px-8 font-display text-xl font-bold text-primary-foreground shadow-[0_5px_0_0_var(--cta-shadow)]">
                 Go to Dashboard
               </Button>
             </Show>
@@ -68,8 +68,8 @@ export default function HomePage() {
               </div>
 
               <div className="mt-8 grid gap-6 md:grid-cols-[1fr_0.9fr] md:items-center">
-                <div className="relative flex min-h-90 items-center justify-center rounded-[2.25rem] bg-[image:var(--pet-stage-gradient)] px-6 py-8">
-                  <div className="absolute inset-0 rounded-4xl bg-[image:var(--pet-stage-glow)]" />
+                <div className="relative flex min-h-90 items-center justify-center rounded-[2.25rem] bg-(image:--pet-stage-gradient) px-6 py-8">
+                  <div className="absolute inset-0 rounded-4xl bg-(image:--pet-stage-glow)" />
                   <div className="absolute -right-2 top-10 flex size-14 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container shadow-lg rotate-12">
                     <Star className="size-6" />
                   </div>
