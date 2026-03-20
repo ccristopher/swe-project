@@ -8,7 +8,7 @@ import './globals.css';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-white antialiased">
+      <body className="bg-background antialiased">
         <ClerkProvider>
           <LayoutContent>{children}</LayoutContent>
         </ClerkProvider>
@@ -21,16 +21,15 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   useSyncUser();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <header className="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-6 sm:px-8">
         <div className="flex items-center gap-4">
-          <div className="flex size-12 items-center justify-center rounded-[1.15rem] border-2 border-black bg-white">
-            <p className="text-base text-muted-foreground">
-              logo
-            </p>
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_4px_0_0_#5737d9]">
           </div>
           <div>
-            <p className="text-[2rem] font-semibold tracking-tight">Pet and Prose</p>
+            <p className="font-display text-[2rem] font-extrabold tracking-tight text-primary">
+              Pet &amp; Prose
+            </p>
           </div>
         </div>
 
@@ -39,7 +38,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
         </Show>
 
         <Show when="signed-in">
-          <div>
+          <div className="flex size-12 items-center justify-center rounded-full border-2 border-primary/20 bg-primary-container">
             <UserButton />
           </div>
         </Show>

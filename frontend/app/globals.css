@@ -1,8 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @theme inline {
-  --font-sans: "Avenir Next", "Nunito", "Segoe UI", sans-serif;
+  --font-sans: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  --font-display: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
   --font-mono: "SFMono-Regular", "Menlo", "Monaco", monospace;
 
   --color-background: var(--background);
@@ -13,8 +15,11 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-container: var(--primary-container);
+  --color-primary-dim: var(--primary-dim);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-container: var(--secondary-container);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -23,32 +28,63 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-outline-variant: var(--outline-variant);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 8px);
+  --radius-xl: calc(var(--radius) + 16px);
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #18181b;
-  --card: #ffffff;
-  --card-foreground: #18181b;
+  --background: #fffbff;
+  --foreground: #393832;
+  --card: #fdf9ef;
+  --card-foreground: #393832;
   --popover: #ffffff;
-  --popover-foreground: #18181b;
-  --primary: #ffd84d;
-  --primary-foreground: #111111;
-  --secondary: #ffe9ef;
-  --secondary-foreground: #6f3958;
-  --muted: #f4f1ee;
-  --muted-foreground: #69616f;
-  --accent: #dff6f4;
-  --accent-foreground: #155e63;
-  --destructive: #dc2626;
-  --border: rgba(17, 17, 17, 0.14);
+  --popover-foreground: #393832;
+  --primary: #6346e6;
+  --primary-foreground: #ffffff;
+  --primary-container: #a192ff;
+  --primary-dim: #5737d9;
+  --secondary: #776300;
+  --secondary-foreground: #ffffff;
+  --secondary-container: #ffd709;
+  --muted: #f7f3e9;
+  --muted-foreground: #66645e;
+  --accent: #ece8dd;
+  --accent-foreground: #393832;
+  --destructive: #c12048;
+  --border: rgba(131, 128, 121, 0.18);
   --input: #ffffff;
-  --ring: rgba(255, 216, 77, 0.45);
+  --ring: rgba(99, 70, 230, 0.18);
+  --surface: #fffbff;
+  --surface-container: #f7f3e9;
+  --surface-container-low: #fdf9ef;
+  --surface-container-high: #f1eee3;
+  --surface-container-highest: #ece8dd;
+  --surface-variant: #ece8dd;
+  --tertiary: #006f7b;
+  --tertiary-container: #58e7fb;
+  --on-surface-variant: #66645e;
+  --on-primary-container: #210077;
+  --on-primary-fixed-variant: #2a0091;
+  --on-secondary-container: #5b4b00;
+  --on-tertiary-container: #00515b;
+  --outline-variant: #bcb9b1;
   --radius: 1.5rem;
 }
 
@@ -57,16 +93,26 @@
     @apply border-border;
   }
 
-  html,
-  body {
-    background: #ffffff;
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
     @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top right, rgba(161, 146, 255, 0.22), transparent 28%),
+      radial-gradient(circle at left center, rgba(88, 231, 251, 0.1), transparent 22%);
+  }
+
+  a {
+    @apply outline-none;
+  }
+
+  button {
+    @apply outline-none;
   }
 
   ::selection {
-    background: rgba(255, 216, 77, 0.35);
+    background: rgba(161, 146, 255, 0.35);
   }
 }
