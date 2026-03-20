@@ -1,24 +1,14 @@
 'use client';
 
-import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
-import { Geist, Geist_Mono } from 'next/font/google';
-import React, { useEffect } from 'react';
+import { ClerkProvider, Show, UserButton } from '@clerk/nextjs';
+import React from 'react';
+import useSyncUser from './hooks/useSyncUser';
 import './globals.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="bg-white antialiased">
         <ClerkProvider>
           <LayoutContent>{children}</LayoutContent>
         </ClerkProvider>
@@ -28,33 +18,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
-  const { isSignedIn } = useUser();
-
-  useEffect(() => {
-    if (isSignedIn) {
-      fetch('/api/users', { method: 'POST' })
-      .then(res => res.json())
-      .then(data => console.log('User synced to MongoDB:', data))
-      .catch(err => console.error('Failed to sync user:', err));
-    }
-  }, [isSignedIn]);
+  useSyncUser();
 
   return (
-    <>
-      <header className="flex justify-end items-center p-4 gap-4 h-16">
+    <div className="min-h-screen bg-white">
+      <header className="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-6 sm:px-8">
+        <div className="flex items-center gap-4">
+          <div className="flex size-12 items-center justify-center rounded-[1.15rem] border-2 border-black bg-white">
+            <p className="text-base text-muted-foreground">
+              logo
+            </p>
+          </div>
+          <div>
+            <p className="text-[2rem] font-semibold tracking-tight">Pet and Prose</p>
+          </div>
+        </div>
+
         <Show when="signed-out">
-          <SignInButton />
-          <SignUpButton>
-            <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-              Sign Up
-            </button>
-          </SignUpButton>
+          <div />
         </Show>
+
         <Show when="signed-in">
-          <UserButton />
+          <div>
+            <UserButton />
+          </div>
         </Show>
       </header>
-      {children}
-    </>
+
+      <main>{children}</main>
+    </div>
   );
 }
