@@ -8,10 +8,10 @@ export default function useSyncUser() {
   const { isSignedIn } = useUser();
 
   useEffect(() => {
-    if (isSignedIn) {
-      fetch('/api/users')
-        .then(res => res.json())
-        .then(data => console.log('User sync:', data));
-    }
+    if (!isSignedIn) return;
+
+    void fetch('/api/users', { method: 'POST' }).catch((error) => {
+      console.error('Failed to sync user:', error);
+    });
   }, [isSignedIn]);
 }
