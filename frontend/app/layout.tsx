@@ -1,7 +1,7 @@
 'use client';
 
 import { ClerkProvider, Show, UserButton } from '@clerk/nextjs';
-import React from 'react';
+import React, { useEffect } from 'react';
 import useSyncUser from './hooks/useSyncUser';
 import './globals.css';
 
@@ -19,6 +19,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
   useSyncUser();
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const root = document.documentElement;
+
+    const applyTheme = (isDark: boolean) => {
+      root.classList.toggle('dark', isDark);
+      root.classList.toggle('light', !isDark);
+    };
+
+    applyTheme(mediaQuery.matches);
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      applyTheme(event.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
