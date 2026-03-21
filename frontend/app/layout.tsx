@@ -46,7 +46,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-6 sm:px-8">
         <div className="flex items-center gap-4">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_4px_0_0_#5737d9]">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_4px_0_0_var(--cta-shadow)]">
           </div>
           <div>
             <p className="font-display text-[2rem] font-extrabold tracking-tight text-primary">

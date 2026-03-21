@@ -32,7 +32,7 @@ export default function HomePage() {
               <SignInButton mode="modal">
                 <Button
                   variant="outline"
-                  className="h-16 rounded-full border-transparent bg-surface-container-low px-8 font-display text-xl font-bold text-foreground shadow-[0_10px_24px_rgba(99,70,230,0.08)] transition-transform hover:-translate-y-0.5 hover:bg-surface-container active:translate-y-0 cursor-pointer"
+                  className="h-16 rounded-full border-transparent bg-surface-container-low px-8 font-display text-xl font-bold text-foreground shadow-[0_10px_24px_rgba(23,181,248,0.10)] transition-transform hover:-translate-y-0.5 hover:bg-surface-container active:translate-y-0 cursor-pointer"
                 >
                   I already have an account
                 </Button>
@@ -103,7 +103,7 @@ export default function HomePage() {
                       <p className="whitespace-nowrap font-display text-sm font-black text-primary">10 / 12</p>
                     </div>
                     <div className="mt-4 h-4 overflow-hidden rounded-full bg-surface">
-                      <div className="h-full w-[83%] rounded-full bg-[linear-gradient(90deg,#006f7b,#58e7fb)]" />
+                      <div className="h-full w-[83%] rounded-full bg-accent" />
                     </div>
                   </div>
 
