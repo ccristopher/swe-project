@@ -1,0 +1,95 @@
+.primaryAction {
+  background-image: linear-gradient(135deg, #ffe08a, #ffd166);
+  box-shadow: 0 5px 0 0 #d4a73e;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.primaryAction:hover {
+  transform: translateY(-2px);
+}
+
+.primaryAction:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 0 #d4a73e;
+}
+
+.secondaryAction {
+  box-shadow: 0 10px 24px rgba(38, 70, 83, 0.12);
+  transition: transform 150ms ease;
+}
+
+.secondaryAction:hover {
+  transform: translateY(-2px);
+}
+
+.petStage {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.32) 0 2px, transparent 2px 24px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.32) 0 2px, transparent 2px 24px),
+    linear-gradient(180deg, #fff5db, #ffe7ad);
+}
+
+.petStageGlow {
+  background-image: radial-gradient(circle at center, rgba(42, 157, 143, 0.16), transparent 60%);
+}
+
+.starBadge {
+  background: #f4a261;
+  color: #264653;
+}
+
+.statValue {
+  color: #264653;
+}
+
+.progressLabel {
+  color: #5d6f77;
+}
+
+.progressValue {
+  color: #264653;
+}
+
+.streakCopy {
+  color: #1f4e4d;
+}
+
+@media (prefers-color-scheme: dark) {
+  .primaryAction {
+    background-image: linear-gradient(135deg, #ffd97c, #f4bd4f);
+    box-shadow: 0 5px 0 0 #c7922f;
+  }
+
+  .primaryAction:active {
+    box-shadow: 0 0 0 0 #c7922f;
+  }
+
+  .petStage {
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 24px),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 24px),
+      linear-gradient(180deg, #171e26, #131920);
+  }
+
+  .petStageGlow {
+    background-image: radial-gradient(circle at center, rgba(69, 196, 176, 0.16), transparent 60%);
+  }
+
+  .starBadge {
+    background: #ffd166;
+    color: #131920;
+  }
+
+  .statValue {
+    color: #ffd166;
+  }
+
+  .progressLabel,
+  .progressValue {
+    color: #e2e8f0;
+  }
+
+  .streakCopy {
+    color: #f3f6fb;
+  }
+}
