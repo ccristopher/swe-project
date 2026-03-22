@@ -1,6 +1,169 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-geist-sans), sans-serif;
-    background-color: #f9f9f9;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-sans: var(--font-body), "Segoe UI", sans-serif;
+  --font-display: var(--font-display-family), var(--font-body), "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", "Menlo", "Monaco", monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-container: var(--primary-container);
+  --color-primary-dim: var(--primary-dim);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-container: var(--secondary-container);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-outline-variant: var(--outline-variant);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 16px);
+}
+
+:root {
+  --font-body: "Be Vietnam Pro";
+  --font-display-family: "Plus Jakarta Sans";
+  color-scheme: light;
+  --background: #fff9ef;
+  --foreground: #264653;
+  --card: #ffffff;
+  --card-foreground: #264653;
+  --popover: #ffffff;
+  --popover-foreground: #264653;
+  --primary: #2a9d8f;
+  --primary-foreground: #fff9ef;
+  --primary-container: #d8f1ed;
+  --primary-dim: #218276;
+  --secondary: #ffd166;
+  --secondary-foreground: #264653;
+  --secondary-container: #ffe7ad;
+  --muted: #fff3d9;
+  --muted-foreground: #5d6f77;
+  --accent: #ffd166;
+  --accent-foreground: #264653;
+  --destructive: #c12048;
+  --border: rgba(38, 70, 83, 0.12);
+  --input: #ffffff;
+  --ring: rgba(42, 157, 143, 0.24);
+  --surface: #fff9ef;
+  --surface-container: #fff3d9;
+  --surface-container-low: #ffffff;
+  --surface-container-high: #ffedc0;
+  --surface-container-highest: #ffe3a3;
+  --surface-variant: #ffe8b8;
+  --tertiary: #f4a261;
+  --tertiary-container: #f9dcc3;
+  --on-surface-variant: #5d6f77;
+  --on-primary-container: #1f4e4d;
+  --on-primary-fixed-variant: #21665f;
+  --on-secondary-container: #6f4f00;
+  --on-tertiary-container: #6d3b1b;
+  --outline-variant: #d7c89d;
+  --page-glow-primary: rgba(255, 209, 102, 0.24);
+  --page-glow-secondary: rgba(244, 162, 97, 0.18);
+  --card-shadow: rgba(38, 70, 83, 0.12);
+  --brand-shadow: #218276;
+  --radius: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #131920;
+    --foreground: #e2e8f0;
+    --card: #1e2630;
+    --card-foreground: #e2e8f0;
+    --popover: #1e2630;
+    --popover-foreground: #e2e8f0;
+    --primary: #45c4b0;
+    --primary-foreground: #131920;
+    --primary-container: rgba(69, 196, 176, 0.16);
+    --primary-dim: #2fa793;
+    --secondary: #ffd166;
+    --secondary-foreground: #131920;
+    --secondary-container: rgba(255, 209, 102, 0.18);
+    --muted: #171e26;
+    --muted-foreground: #a9b4c4;
+    --accent: #ffd166;
+    --accent-foreground: #131920;
+    --destructive: #ff6b8d;
+    --border: rgba(226, 232, 240, 0.12);
+    --input: #1e2630;
+    --ring: rgba(69, 196, 176, 0.35);
+    --surface: #131920;
+    --surface-container: #1a212a;
+    --surface-container-low: #1e2630;
+    --surface-container-high: #202a35;
+    --surface-container-highest: #171e26;
+    --surface-variant: #202a35;
+    --tertiary: #f4a261;
+    --tertiary-container: rgba(244, 162, 97, 0.16);
+    --on-surface-variant: #a9b4c4;
+    --on-primary-container: #d8fff8;
+    --on-primary-fixed-variant: #b9f4ea;
+    --on-secondary-container: #ffe9b0;
+    --on-tertiary-container: #ffd9bd;
+    --outline-variant: #314050;
+    --page-glow-primary: rgba(255, 209, 102, 0.18);
+    --page-glow-secondary: rgba(69, 196, 176, 0.14);
+    --card-shadow: rgba(0, 0, 0, 0.35);
+    --brand-shadow: #2d8f82;
   }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top right, var(--page-glow-primary), transparent 28%),
+      radial-gradient(circle at left center, var(--page-glow-secondary), transparent 22%);
+  }
+
+  a {
+    @apply outline-none;
+  }
+
+  button {
+    @apply outline-none;
+  }
+
+  ::selection {
+    background: rgba(42, 157, 143, 0.28);
+  }
+}

@@ -1,6 +1,26 @@
-# Ignore node_modules folder
+# Dependencies
 node_modules/
 
-# Ignore environment variables file
+# Build output and caches
+.next/
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+*.tsbuildinfo
+*.log
+
+# Environment files
 .env
-.env.local
+.env.*
+!.env.example
+!.env.local.example
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+
+# Clerk local config
+.clerk/

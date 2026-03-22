@@ -4,7 +4,7 @@ const express = require('express');
 const connectToMongo = require('./db/mongo');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 4000;
 
 async function startServer() {
   try {
