@@ -99,7 +99,7 @@ function PetPreviewCard() {
 
             <div className="relative z-10 flex w-full justify-center">
               <Image
-                src="/pett.png"
+                src="/placeholder_pet.png"
                 alt="Pet companion illustration"
                 width={280}
                 height={330}
