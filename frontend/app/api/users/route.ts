@@ -9,7 +9,7 @@ export async function POST() {
 
     const user = await (await clerkClient()).users.getUser(session.userId);
 
-    const { users, pets, books, items } = await initSchemas();
+    const { users } = await initSchemas();
 
     // Check if user already exists
     let dbUser = await users.findOne({ clerkUserId: session.userId });
@@ -28,15 +28,7 @@ export async function POST() {
 
     console.log('Inserted user:', newUser);
 
-    // test: insert a pet for this user
-    const petResult = await pets.insertOne({
-      name: 'Fluffy',
-      type: 'Dog',
-      ownerId: userId,
-      imageID: 'fluffy.png',
-    });
-
-    return new Response(JSON.stringify({ message: 'User added', userId, petId: petResult.insertedId }));
+    return new Response(JSON.stringify({ message: 'User added', userId }));
   } catch (err: any) {
     console.error('Error inserting user:', err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });

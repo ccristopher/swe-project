@@ -6,8 +6,10 @@ require('dotenv').config({
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
+const dbUser = encodeURIComponent(process.env.DB_USER || '');
+const dbPassword = encodeURIComponent(process.env.DB_PASSWORD || '');
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.pfigh3v.mongodb.net/pet_n_prose?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.pfigh3v.mongodb.net/pet_n_prose?retryWrites=true&w=majority&authSource=admin`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -42,13 +44,9 @@ async function testConnection() {
     // List collections
     const collections = await db.listCollections().toArray();
     console.log("Collections:", collections.map(c => c.name));
-    console.log('Users collection:', usersCollection);
   } catch (err) {
     console.error("Connection failed:", err.message);
   }
 }
 
-// Run test if called directly
 if (require.main === module) testConnection();
-
-module.exports = connectDB;

@@ -67,7 +67,8 @@ const itemsSchema = {
   }
 };
 
-// Initialize collections with validation
+const { ObjectId } = require('mongodb');
+
 async function initSchemas() {
   const db = await connectDB();
 
@@ -78,5 +79,7 @@ async function initSchemas() {
 
   return { users, pets, books, items };
 }
+
+initSchemas.ObjectId = ObjectId;
 
 module.exports = initSchemas;
