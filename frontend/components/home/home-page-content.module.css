@@ -1,5 +1,5 @@
 .primaryAction {
-  background-image: linear-gradient(135deg, #ffe08a, #ffd166);
+  background-image: linear-gradient(135deg, #ffe08a, var(--accent));
   box-shadow: 0 5px 0 0 #d4a73e;
   transition: transform 150ms ease, box-shadow 150ms ease;
 }
@@ -14,82 +14,97 @@
 }
 
 .secondaryAction {
-  box-shadow: 0 10px 24px rgba(38, 70, 83, 0.12);
-  transition: transform 150ms ease;
+  box-shadow: 0 10px 24px var(--card-shadow);
 }
 
-.secondaryAction:hover {
-  transform: translateY(-2px);
+.readingContinueButton {
+  border: 1px solid var(--border);
+}
+
+.readingContinueButton:hover {
+  border-color: var(--border);
+}
+
+.readingDetailsCard {
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 10px 20px var(--card-shadow);
 }
 
 .petStage {
+  background-color: var(--secondary-container);
   background-image:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.32) 0 2px, transparent 2px 24px),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.32) 0 2px, transparent 2px 24px),
-    linear-gradient(180deg, #fff5db, #ffe7ad);
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.25) 0 2px,
+      transparent 2px 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.25) 0 2px,
+      transparent 2px 24px
+    );
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
-.petStageGlow {
-  background-image: radial-gradient(circle at center, rgba(42, 157, 143, 0.16), transparent 60%);
+.dashboardBookCover {
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 12px 24px var(--card-shadow);
 }
 
-.starBadge {
-  background: #f4a261;
-  color: #264653;
+.finishedBookCoverFrame {
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 10px 18px var(--card-shadow);
 }
 
-.statValue {
-  color: #264653;
+.dashboardPetStage {
+  background-color: var(--secondary-container);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.18) 0 2px,
+      transparent 2px 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.18) 0 2px,
+      transparent 2px 24px
+    );
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
-.progressLabel {
-  color: #5d6f77;
+.dashboardPetStage::after {
+  content: '';
+  position: absolute;
+  inset-inline: 18%;
+  bottom: 1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: rgba(38, 70, 83, 0.14);
+  filter: blur(8px);
 }
 
-.progressValue {
-  color: #264653;
+.quoteMark {
+  color: var(--tertiary);
+  font-family: var(--font-display-family), var(--font-body), "Segoe UI", sans-serif;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
-.streakCopy {
-  color: #1f4e4d;
-}
-
-@media (prefers-color-scheme: dark) {
-  .primaryAction {
-    background-image: linear-gradient(135deg, #ffd97c, #f4bd4f);
-    box-shadow: 0 5px 0 0 #c7922f;
-  }
-
-  .primaryAction:active {
-    box-shadow: 0 0 0 0 #c7922f;
-  }
-
-  .petStage {
-    background-image:
-      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 24px),
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 24px),
-      linear-gradient(180deg, #171e26, #131920);
-  }
-
-  .petStageGlow {
-    background-image: radial-gradient(circle at center, rgba(69, 196, 176, 0.16), transparent 60%);
-  }
-
-  .starBadge {
-    background: #ffd166;
-    color: #131920;
-  }
-
-  .statValue {
-    color: #ffd166;
-  }
-
-  .progressLabel,
-  .progressValue {
-    color: #e2e8f0;
-  }
-
-  .streakCopy {
-    color: #f3f6fb;
-  }
+.wardrobeSlot {
+  background: var(--surface-container-low);
+  box-shadow:
+    inset 0 0 0 1px var(--border),
+    0 10px 18px var(--card-shadow);
 }
