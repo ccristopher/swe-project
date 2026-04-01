@@ -87,7 +87,7 @@ function CurrentReadPanel({ currentRead }: { currentRead: DashboardData['current
     <Card className={`${panelCardClassName} p-5 sm:p-6`}>
       <div className="grid gap-5 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
         <div
-          className={`relative mx-auto aspect-[2/3] w-full max-w-[11.25rem] overflow-hidden rounded-[1.95rem] lg:mx-0 ${styles.dashboardBookCover}`}
+          className={`relative mx-auto aspect-2/3 w-full max-w-45 overflow-hidden rounded-[1.95rem] lg:mx-0 ${styles.dashboardBookCover}`}
         >
           <Image
             src={currentRead.coverSrc}
@@ -224,7 +224,7 @@ function PetSummaryPanel({ pet }: { pet: DashboardData['pet'] }) {
       </div>
 
       <Card
-        className={`relative mt-4 min-h-[18rem] gap-0 rounded-[2.25rem] border-0 px-5 pb-5 pt-6 shadow-none ${styles.dashboardPetStage}`}
+        className={`relative mt-4 min-h-72 gap-0 rounded-[2.25rem] border-0 px-5 pb-5 pt-6 shadow-none ${styles.dashboardPetStage}`}
       >
         <div
           className="absolute -right-2 top-9 flex size-14 rotate-12 items-center justify-center rounded-full bg-tertiary text-foreground shadow-lg"
@@ -301,7 +301,7 @@ function NextUnlockPanel({ nextUnlock }: { nextUnlock: DashboardData['nextUnlock
           {nextUnlock.accessorySlots.map((slot) => (
             <Card
               key={slot}
-              className={`aspect-square gap-0 rounded-[1.5rem] border-0 p-0 shadow-none ${styles.wardrobeSlot}`}
+              className={`aspect-square gap-0 rounded-3xl border-0 p-0 shadow-none ${styles.wardrobeSlot}`}
             />
           ))}
         </div>

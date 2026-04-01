@@ -9,7 +9,7 @@ const statToneClassNames = {
 
 export function DashboardStatCard({ icon: Icon, label, tone, value }: DashboardStat) {
   return (
-    <Card className="min-h-[9.5rem] gap-0 rounded-[1.9rem] border-0 bg-surface-container-low p-5 text-center shadow-[0_14px_30px_var(--card-shadow)]">
+    <Card className="min-h-38 gap-0 rounded-[1.9rem] border-0 bg-surface-container-low p-5 text-center shadow-[0_14px_30px_var(--card-shadow)]">
       <div
         className={`mx-auto flex size-11 items-center justify-center rounded-[1.1rem] ${statToneClassNames[tone]}`}
       >

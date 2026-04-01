@@ -7,7 +7,7 @@ export function FinishedBookCard({ author, imageSrc, title }: FinishedBook) {
   return (
     <Card className="gap-0 rounded-[1.9rem] border-0 bg-surface-container-low p-3 shadow-[0_14px_30px_var(--card-shadow)] transition-transform duration-150 hover:-translate-y-1 hover:shadow-[0_18px_34px_var(--card-shadow)]">
       <div
-        className={`relative mx-auto aspect-[2/3] w-full max-w-[10rem] overflow-hidden rounded-[1.45rem] ${styles.finishedBookCoverFrame}`}
+        className={`relative mx-auto aspect-2/3 w-full max-w-40 overflow-hidden rounded-[1.45rem] ${styles.finishedBookCoverFrame}`}
       >
         <Image
           src={imageSrc}
