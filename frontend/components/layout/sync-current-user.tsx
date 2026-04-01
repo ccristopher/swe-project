@@ -1,18 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useSyncCurrentUser } from '@/hooks/use-sync-current-user';
 
 export function SyncCurrentUser() {
-  const { isLoaded, isSignedIn } = useUser();
-
-  useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
-
-    void fetch('/api/users', { method: 'POST' }).catch((error) => {
-      console.error('Failed to sync user:', error);
-    });
-  }, [isLoaded, isSignedIn]);
+  useSyncCurrentUser();
 
   return null;
 }
