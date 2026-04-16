@@ -93,12 +93,16 @@ export default function ProfilePage() {
             {booksPreview?.map((book: any) => (
               <div
                 key={book._id}
-                className="secondaryAction rounded-lg overflow-hidden"
+                className="secondaryAction rounded-lg overflow-hidden p-2"
               >
                 <img
-                  src={book.cover}
-                  className="w-full h-32 object-cover"
+                  src={book.coverUrl || "/default-book-cover.png"}
+                  className="w-full h-32 object-cover rounded-md"
                 />
+
+                <p className="text-xs mt-2 text-center truncate">
+                  {book.name}
+                </p>
               </div>
             ))}
           </div>
