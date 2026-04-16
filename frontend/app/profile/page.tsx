@@ -11,6 +11,7 @@ export default function ProfilePage() {
   const [data, setData] = useState<any>(null);
   const [quote, setQuote] = useState("");
   const [selectedBook, setSelectedBook] = useState<any>(null);
+  const [isFriend, setIsFriend] = useState(false);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -93,6 +94,12 @@ export default function ProfilePage() {
                 </Button>
               </Link>
 
+              <Link href="/friends">
+                <Button className="secondaryAction">
+                  Friends
+                </Button>
+              </Link>
+
               <Link href="/books">
                 <Button className="secondaryAction">
                   View All
@@ -154,7 +161,7 @@ export default function ProfilePage() {
         {selectedBook.author}
       </p>
 
-      {/* PROGRESS BAR 🔥 */}
+      {/* PROGRESS BAR */}
       <div className="mt-4">
         <p className="text-xs mb-1">
           {selectedBook.pagesRead || 0} / {selectedBook.numberOfPages} pages
