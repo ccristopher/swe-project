@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Star } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import styles from './home-page-content.module.css';
+import Link from "next/link";
 
 export function HomePageContent() {
   return (
@@ -59,9 +60,12 @@ function AuthActions() {
       )}
 
       {isSignedIn && (
-        <Button className={`h-16 rounded-full px-8 font-display text-xl font-bold text-accent-foreground ${styles.primaryAction}`}>
-          Go to Dashboard
-        </Button>
+        <Link
+          href="/profile"
+          className={`h-16 rounded-full px-8 font-display text-xl font-bold text-accent-foreground ${styles.primaryAction} flex items-center justify-center`}
+        >
+          Go to Profile
+        </Link>
       )}
     </div>
   );
