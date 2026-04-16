@@ -26,6 +26,23 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     if (typeof body?.title === 'string' && body.title) updateDoc.name = body.title;
     if (typeof body?.author === 'string' && body.author) updateDoc.author = body.author;
     if (typeof body?.genre === 'string' && body.genre) updateDoc.genre = body.genre;
+    if (typeof body?.review === "string") {
+      updateDoc.review = body.review;
+    }
+    
+    if (body?.pagesRead !== undefined) {
+      const pagesRead = Number(body.pagesRead);
+      if (!Number.isFinite(pagesRead) || pagesRead < 0) {
+        return new Response(JSON.stringify({ error: 'pagesRead must be a non-negative number' }), {
+          status: 400,
+        });
+      }
+      updateDoc.pagesRead = Math.floor(pagesRead);
+    }
+    
+    if (typeof body?.finishedAt === "string") {
+      updateDoc.finishedAt = new Date(body.finishedAt);
+    }
     if (body?.pageCount !== undefined) {
       const pageCount = Number(body.pageCount);
       if (!Number.isFinite(pageCount) || pageCount < 0) {

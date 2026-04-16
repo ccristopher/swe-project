@@ -49,6 +49,7 @@ const booksSchema = {
         isbn: { bsonType: "string" },
         coverURL: { bsonType: "string", description: "must be a URL string" },
         completed: { bsonType: "bool", description: "must be a boolean" },
+        review: { bsonType: "string" },
         numberOfPages: { bsonType: "int", description: "must be an integer" }
       }
     }
