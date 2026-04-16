@@ -81,18 +81,24 @@ export default function ProfilePage() {
 
         {/* BOOKS SECTION */}
         <div>
-          <div className="flex justify-between items-center mb-2">
+            <div className="flex justify-between items-center mb-2">
             <h2 className="streakCopy text-lg font-bold">
               Books Read
             </h2>
 
-            
+            <div className="flex gap-2">
+              <Link href="/leaderboard">
+                <Button className="primaryAction">
+                  🏆 Leaderboard
+                </Button>
+              </Link>
 
-            <Link href="/books">
-              <Button className="primaryAction">
-                View All
-              </Button>
-            </Link>
+              <Link href="/books">
+                <Button className="secondaryAction">
+                  View All
+                </Button>
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">

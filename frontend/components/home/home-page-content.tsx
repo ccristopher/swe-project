@@ -67,6 +67,12 @@ function AuthActions() {
           Go to Profile
         </Link>
       )}
+
+    <Link href="/leaderboard">
+      <Button className={styles.primaryAction}>
+        Leaderboard
+      </Button>
+    </Link>
     </div>
   );
 }

@@ -14,7 +14,14 @@ const userSchema = {
           pattern: "^.+@.+$", 
           description: "must be a valid email" 
         },
-        createdAt: { bsonType: "date" }
+        createdAt: { bsonType: "date" },
+        friends: {
+          bsonType: "array",
+          items: { bsonType: "objectId" },
+          description: "list of friend user IDs"
+        }, 
+        totalPagesRead: { bsonType: "int" },
+        booksCompleted: { bsonType: "int" }
       }
     }
   }

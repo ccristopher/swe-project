@@ -77,6 +77,16 @@ export async function POST(req: Request) {
       completed,
     });
 
+    await users.updateOne(
+      { _id: dbUser._id },
+      {
+        $inc: {
+          booksCompleted: completed ? 1 : 0,
+          totalPagesRead: Math.floor(pageCount),
+        },
+      }
+    );
+
     return new Response(JSON.stringify({ message: 'Book logged', bookId: result.insertedId }), {
       status: 201,
     });
