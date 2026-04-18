@@ -55,7 +55,7 @@ export default function FriendProfilePage() {
                 className="secondaryAction rounded-lg overflow-hidden p-2"
               >
                 <img
-                  src={book.coverUrl || "/default-book-cover.png"}
+                  src={book.coverUrl || "/defbookcover-min.jpg"}
                   className="w-full h-28 object-cover rounded-md"
                 />
                 <p className="text-xs mt-1 truncate">

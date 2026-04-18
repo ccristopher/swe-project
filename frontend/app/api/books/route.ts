@@ -2,6 +2,12 @@ import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../backend/db/schema';
 const COVER_API = "https://bookcover.longitood.com/bookcover";
 
+function toPublicPath(value: unknown, fallback: string) {
+  if (typeof value !== 'string' || !value.trim()) return fallback;
+  if (/^https?:\/\//i.test(value)) return value;
+  return value.startsWith('/') ? value : `/${value}`;
+}
+
 export async function GET() {
   try {
     const session = await auth();
@@ -16,7 +22,11 @@ export async function GET() {
     }
 
     const history = await books.find({ ownerId: dbUser._id }).sort({ _id: -1 }).toArray();
-    return new Response(JSON.stringify({ books: history }), { status: 200 });
+    const normalizedBooks = history.map((book: any) => ({
+      ...book,
+      coverUrl: toPublicPath(book.coverUrl, '/defbookcover-min.jpg'),
+    }));
+    return new Response(JSON.stringify({ books: normalizedBooks }), { status: 200 });
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
@@ -49,9 +59,7 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
     }
 
-    const COVER_API = "https://bookcover.longitood.com/bookcover";
-
-    let coverUrl = "";
+    let coverUrl = '/defbookcover-min.jpg';
 
     try {
       const coverRes = await fetch(
@@ -60,7 +68,7 @@ export async function POST(req: Request) {
 
       if (coverRes.ok) {
         const data = await coverRes.json();
-        coverUrl = data.url || "../../../../public/defbookcover-min.jpg";
+        coverUrl = toPublicPath(data?.url, '/defbookcover-min.jpg');
       }
     } catch (err) {
       console.log("Cover fetch failed:", err);

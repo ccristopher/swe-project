@@ -39,7 +39,7 @@ export default function BooksPage() {
           >
             {/* COVER */}
             <img
-              src={book.coverUrl || "/default-book-cover.png"}
+              src={book.coverUrl || "/defbookcover-min.jpg"}
               className="w-20 h-28 object-cover rounded-md"
             />
 
@@ -86,7 +86,7 @@ export default function BooksPage() {
 
       {/* COVER */}
       <img
-        src={selectedBook.coverUrl || "/default-book-cover.png"}
+        src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
         className="w-full h-48 object-cover rounded-xl"
       />
 
