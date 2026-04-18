@@ -60,7 +60,7 @@ export default function ProfilePage() {
 
           {/* Pet */}
           <img
-            src={data.pet?.imageID}
+            src={data.pet?.imageID || "/placeholder_pet.png"}
             className="w-32 h-32 z-10"
           />
 
@@ -116,7 +116,7 @@ export default function ProfilePage() {
                   className="secondaryAction rounded-lg overflow-hidden p-2 cursor-pointer hover:-translate-y-1 transition"
                 >
                 <img
-                  src={book.coverUrl || "/default-book-cover.png"}
+                  src={book.coverUrl || "/defbookcover-min.jpg"}
                   className="w-full h-32 object-cover rounded-md"
                 />
 
@@ -148,7 +148,7 @@ export default function ProfilePage() {
 
       {/* COVER */}
       <img
-        src={selectedBook.coverUrl || "/default-book-cover.png"}
+        src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
         className="w-full h-48 object-cover rounded-xl"
       />
 
