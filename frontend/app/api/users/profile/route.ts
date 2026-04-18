@@ -37,7 +37,7 @@ export async function GET(req: Request) {
   const normalizedPet = pet
     ? {
         ...pet,
-        imageID: toPublicPath(pet.imageID, "/placeholder_pet.png"),
+        imageID: toPublicPath(pet.imageID, "/gator....png"),
       }
     : null;
 

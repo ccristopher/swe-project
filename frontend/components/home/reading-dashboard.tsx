@@ -1,61 +1,159 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
-import { ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { BarChart3, BookOpen, ChevronRight, Trophy } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useDashboardBooks } from '@/hooks/use-dashboard-books';
+import { BookDetailsModal } from '@/components/books/book-details-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { DashboardStatCard } from './dashboard-stat-card';
-import { createPlaceholderDashboardData, type DashboardData } from './home-content.data';
+import type { CurrentRead, DashboardStat, FinishedBook, MonthlyGoal } from './home-content.data';
 import { FinishedBookCard } from './finished-book-card';
 import styles from './home-page-content.module.css';
 
 const panelCardClassName =
   'gap-0 rounded-[2.125rem] border-0 bg-surface-container-low shadow-[0_14px_30px_var(--card-shadow)]';
-const friendAvatarToneClassNames = [
-  'bg-primary-container text-on-primary-fixed-variant',
-  'bg-secondary-container text-on-secondary-container',
-  'bg-tertiary-container text-on-tertiary-container',
-] as const;
 
 export function ReadingDashboard() {
-  const { user } = useUser();
-  const displayName = user?.firstName ?? user?.username ?? user?.fullName ?? 'Reader';
-  const dashboard = createPlaceholderDashboardData(displayName);
+  const {
+    completedBooks,
+    currentRead,
+    displayName,
+    isDashboardLoading,
+    leaderboardRank,
+    petImageSrc,
+    recentBooks,
+    totalBooks,
+    totalPagesRead,
+    updateBookInDashboard,
+  } = useDashboardBooks();
+  const [selectedBook, setSelectedBook] = useState<FinishedBook | null>(null);
+
+  const greeting = {
+    body: 'Track your reading progress and keep your momentum going.',
+    cta: 'Start reading',
+    title: `Welcome back, ${displayName}!`,
+  };
+
+  const stats: DashboardStat[] = [
+    { icon: BookOpen, label: 'Books logged', tone: 'book', value: `${totalBooks}` },
+    { icon: BarChart3, label: 'Pages read', tone: 'pages', value: `${totalPagesRead}` },
+    { icon: Trophy, label: 'Ranking', tone: 'rank', value: leaderboardRank ? `#${leaderboardRank}` : '-' },
+  ];
+
+  const monthlyGoal: MonthlyGoal = {
+    body: completedBooks
+      ? 'Nice progress. Keep reading to finish even more this month.'
+      : 'Start your first book this month and build your reading habit.',
+    currentPages: totalPagesRead,
+    progress: Math.min(100, (totalPagesRead / 500) * 100),
+    progressLabel: `${Math.min(100, Math.round((totalPagesRead / 500) * 100))}%`,
+    targetPages: 500,
+  };
+
+  if (isDashboardLoading) {
+    return (
+      <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-7xl items-center justify-center">
+          <p className="text-base font-medium text-on-surface-variant">Loading dashboard...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-5">
-            <DashboardHeroPanel greeting={dashboard.greeting} />
-            <CurrentReadPanel currentRead={dashboard.currentRead} />
+            <DashboardHeroPanel greeting={greeting} />
+            <CurrentReadPanel
+              currentRead={currentRead}
+              onOpenDetails={() => {
+                if (!currentRead) return;
+
+                setSelectedBook({
+                  _id: currentRead._id,
+                  author: currentRead.author,
+                  completed: currentRead.completed,
+                  coverUrl: currentRead.coverUrl,
+                  imageSrc: currentRead.coverSrc,
+                  name: currentRead.name,
+                  numberOfPages: currentRead.numberOfPages,
+                  pagesRead: currentRead.pagesRead,
+                  review: currentRead.review || '',
+                  title: currentRead.title,
+                });
+              }}
+              onKeepReading={async () => {
+                if (!currentRead) return;
+
+                const pages = prompt("Update pages read:", `${currentRead.pagesRead || 0}`);
+                if (!pages) return;
+
+                const pagesNum = Number(pages);
+                if (!Number.isFinite(pagesNum) || pagesNum < 0) {
+                  alert("Please enter a valid non-negative number");
+                  return;
+                }
+
+                const response = await fetch(`/api/books/${currentRead._id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ pagesRead: Math.floor(pagesNum) }),
+                });
+
+                if (!response.ok) {
+                  const data = await response.json().catch(() => ({}));
+                  alert(data?.error || "Could not update progress");
+                  return;
+                }
+
+                updateBookInDashboard({
+                  _id: currentRead._id,
+                  pagesRead: Math.floor(pagesNum),
+                });
+              }}
+            />
 
             <section className="grid gap-4 sm:grid-cols-3">
-              {dashboard.stats.map((stat) => (
+              {stats.map((stat) => (
                 <DashboardStatCard key={stat.label} {...stat} />
               ))}
             </section>
 
-            <RecentlyReadPanel finishedBooks={dashboard.finishedBooks} />
-            <MonthlyGoalPanel monthlyGoal={dashboard.monthlyGoal} />
+            <RecentlyReadPanel recentBooks={recentBooks} onSelectBook={setSelectedBook} />
+            <MonthlyGoalPanel monthlyGoal={monthlyGoal} />
           </div>
 
           <aside className="space-y-4">
-            <PetSummaryPanel pet={dashboard.pet} />
-            <NextUnlockPanel nextUnlock={dashboard.nextUnlock} />
-            <RecentActivityPanel friendsActivity={dashboard.friendsActivity} />
+            <PetSummaryPanel
+              petImageSrc={petImageSrc}
+              totalPagesRead={totalPagesRead}
+            />
+            <NextUnlockPanel totalPagesRead={totalPagesRead} />
           </aside>
         </div>
       </div>
+
+      <BookDetailsModal
+        book={selectedBook}
+        onCloseAction={() => setSelectedBook(null)}
+        onBookUpdatedAction={(updatedBook) => {
+          setSelectedBook(updatedBook);
+          updateBookInDashboard(updatedBook);
+        }}
+      />
     </section>
   );
 }
 
-function DashboardHeroPanel({ greeting }: { greeting: DashboardData['greeting'] }) {
+function DashboardHeroPanel({ greeting }: { greeting: { body: string; cta: string; title: string } }) {
   return (
     <Card className={`${panelCardClassName} p-6 sm:p-7`}>
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
@@ -70,11 +168,13 @@ function DashboardHeroPanel({ greeting }: { greeting: DashboardData['greeting'] 
 
         <div className="flex shrink-0 items-center">
           <Button
+            asChild
             className={`h-14 cursor-pointer rounded-full px-8 font-display text-lg font-bold text-accent-foreground ${styles.primaryAction}`}
-            type="button"
           >
-            {greeting.cta}
-            <ChevronRight className="size-4" />
+            <Link href="/books/log">
+              {greeting.cta}
+              <ChevronRight className="size-4" />
+            </Link>
           </Button>
         </div>
       </div>
@@ -82,12 +182,32 @@ function DashboardHeroPanel({ greeting }: { greeting: DashboardData['greeting'] 
   );
 }
 
-function CurrentReadPanel({ currentRead }: { currentRead: DashboardData['currentRead'] }) {
+function CurrentReadPanel({
+  currentRead,
+  onOpenDetails,
+  onKeepReading,
+}: {
+  currentRead: CurrentRead | null;
+  onOpenDetails: () => void;
+  onKeepReading: () => void;
+}) {
+  if (!currentRead) {
+    return (
+      <Card className={`${panelCardClassName} p-6`}>
+        <p className="text-sm font-medium text-on-surface-variant">No books yet. Start by logging your first read.</p>
+        <Button asChild className={`mt-4 h-11 w-fit rounded-full px-6 font-display text-base font-bold ${styles.primaryAction}`}>
+          <Link href="/books/log">Add a book</Link>
+        </Button>
+      </Card>
+    );
+  }
+
   return (
     <Card className={`${panelCardClassName} p-5 sm:p-6`}>
       <div className="grid gap-5 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
         <div
-          className={`relative mx-auto aspect-2/3 w-full max-w-45 overflow-hidden rounded-[1.95rem] lg:mx-0 ${styles.dashboardBookCover}`}
+          className={`relative mx-auto aspect-2/3 w-full max-w-45 cursor-pointer overflow-hidden rounded-[1.95rem] lg:mx-0 ${styles.dashboardBookCover}`}
+          onClick={onOpenDetails}
         >
           <Image
             src={currentRead.coverSrc}
@@ -135,6 +255,7 @@ function CurrentReadPanel({ currentRead }: { currentRead: DashboardData['current
           </div>
 
           <Button
+            onClick={onKeepReading}
             className={`mt-5 h-11 w-full cursor-pointer rounded-full border-transparent bg-surface-container-low px-6 font-display text-base font-bold text-foreground ${styles.secondaryAction} ${styles.readingContinueButton}`}
             type="button"
             variant="outline"
@@ -148,7 +269,13 @@ function CurrentReadPanel({ currentRead }: { currentRead: DashboardData['current
   );
 }
 
-function RecentlyReadPanel({ finishedBooks }: { finishedBooks: DashboardData['finishedBooks'] }) {
+function RecentlyReadPanel({
+  recentBooks,
+  onSelectBook,
+}: {
+  recentBooks: FinishedBook[];
+  onSelectBook: (book: FinishedBook) => void;
+}) {
   return (
     <section>
       <div className="mb-3 flex items-center justify-between gap-4">
@@ -158,24 +285,28 @@ function RecentlyReadPanel({ finishedBooks }: { finishedBooks: DashboardData['fi
           </h2>
         </div>
 
-        <button
+        <Link
+          href="/books"
           className="cursor-pointer text-sm font-semibold text-primary-dim transition-[opacity,color] hover:text-on-primary-container hover:opacity-80"
-          type="button"
         >
           View all
-        </button>
+        </Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {finishedBooks.map((book) => (
-          <FinishedBookCard key={book.title} {...book} />
-        ))}
+        {recentBooks.length ? (
+          recentBooks.map((book) => (
+            <FinishedBookCard key={book._id || book.title} {...book} onClick={() => onSelectBook(book)} />
+          ))
+        ) : (
+          <p className="text-sm font-medium text-on-surface-variant">No books logged yet.</p>
+        )}
       </div>
     </section>
   );
 }
 
-function MonthlyGoalPanel({ monthlyGoal }: { monthlyGoal: DashboardData['monthlyGoal'] }) {
+function MonthlyGoalPanel({ monthlyGoal }: { monthlyGoal: MonthlyGoal }) {
   return (
     <Card className={`${panelCardClassName} p-5 sm:p-6`}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -205,39 +336,37 @@ function MonthlyGoalPanel({ monthlyGoal }: { monthlyGoal: DashboardData['monthly
   );
 }
 
-function PetSummaryPanel({ pet }: { pet: DashboardData['pet'] }) {
+function PetSummaryPanel({
+  petImageSrc,
+  totalPagesRead,
+}: {
+  petImageSrc: string;
+  totalPagesRead: number;
+}) {
+  const pagesPerLevel = 150;
+  const level = Math.max(1, Math.floor(totalPagesRead / pagesPerLevel) + 1);
+  const pagesIntoLevel = totalPagesRead % pagesPerLevel;
+  const pagesToNextLevel = pagesPerLevel - pagesIntoLevel || pagesPerLevel;
+  const levelProgress = Math.min(100, Math.round((pagesIntoLevel / pagesPerLevel) * 100));
+
   return (
     <Card className={`${panelCardClassName} overflow-hidden p-5`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
-            Your Pet
-          </p>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
-            {pet.name}
-          </h2>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">Your Pet</p>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground">Companion</h2>
         </div>
 
         <Badge className="rounded-full bg-accent px-3 py-1 text-xs font-black uppercase tracking-[0.15em] text-accent-foreground hover:bg-accent">
-          {pet.level}
+          Level {level}
         </Badge>
       </div>
 
-      <Card
-        className={`relative mt-4 min-h-72 gap-0 rounded-[2.25rem] border-0 px-5 pb-5 pt-6 shadow-none ${styles.dashboardPetStage}`}
-      >
-        <div
-          className="absolute -right-2 top-9 flex size-14 rotate-12 items-center justify-center rounded-full bg-tertiary text-foreground shadow-lg"
-        >
-          <span aria-hidden="true" className="text-[2.2rem] leading-none">
-            {pet.icon}
-          </span>
-        </div>
-
+      <Card className={`relative mt-4 min-h-72 gap-0 rounded-[2.25rem] border-0 px-5 pb-5 pt-6 shadow-none ${styles.dashboardPetStage}`}>
         <div className="relative z-10 flex w-full justify-center">
           <Image
-            src={pet.imageSrc}
-            alt={pet.imageAlt}
+            src={petImageSrc}
+            alt="Reading companion"
             width={250}
             height={270}
             className="mx-auto mt-3 h-auto w-full max-w-56 object-contain object-center"
@@ -245,64 +374,48 @@ function PetSummaryPanel({ pet }: { pet: DashboardData['pet'] }) {
         </div>
       </Card>
 
-      <p className="mt-4 text-sm leading-6 text-on-surface-variant">{pet.remainingXp}</p>
+      <p className="mt-4 text-sm leading-6 text-on-surface-variant">
+        {pagesToNextLevel} pages to Level {level + 1}
+      </p>
 
       <Progress
         aria-label="Pet experience progress"
         className="mt-3 h-4 rounded-full bg-surface-container"
         indicatorClassName="rounded-full bg-primary"
-        value={pet.progress}
+        value={levelProgress}
       />
-
-      <Card className="mt-1 gap-0 rounded-[1.65rem] border-0 bg-surface-container-low px-3 py-2.5 shadow-none">
-        <div className="flex items-start gap-2">
-          <span aria-hidden="true" className={styles.quoteMark}>
-            &quot;
-          </span>
-
-          <blockquote className="pt-0.5 text-sm leading-6 text-foreground">
-            {pet.quote}
-          </blockquote>
-        </div>
-      </Card>
     </Card>
   );
 }
 
-function NextUnlockPanel({ nextUnlock }: { nextUnlock: DashboardData['nextUnlock'] }) {
+function NextUnlockPanel({ totalPagesRead }: { totalPagesRead: number }) {
+  const unlockEveryPages = 100;
+  const pagesTowardUnlock = totalPagesRead % unlockEveryPages;
+  const progress = Math.round((pagesTowardUnlock / unlockEveryPages) * 100);
+  const remaining = unlockEveryPages - pagesTowardUnlock || unlockEveryPages;
+
   return (
     <Card className={`${panelCardClassName} p-5`}>
-      <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
-        Next unlock
-      </p>
-      <h3 className="mt-2 font-display text-[1.85rem] font-extrabold tracking-tight text-foreground">
-        {nextUnlock.title}
-      </h3>
+      <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">Next unlock</p>
+      <h3 className="mt-2 font-display text-[1.85rem] font-extrabold tracking-tight text-foreground">[Accessory]</h3>
 
-      <p className="mt-1 text-sm font-semibold text-on-primary-fixed-variant">{nextUnlock.genre}</p>
-
-      <p className="mt-3 text-base font-semibold text-foreground">{nextUnlock.remaining}</p>
+      <p className="mt-1 text-sm font-semibold text-on-primary-fixed-variant">[Genre] reward</p>
+      <p className="mt-3 text-base font-semibold text-foreground">{remaining} more pages to unlock</p>
 
       <Progress
         aria-label="Next unlock progress"
         className="mt-3 h-4 rounded-full bg-surface-container"
         indicatorClassName="rounded-full bg-tertiary"
-        value={nextUnlock.progress}
+        value={progress}
       />
 
       <Separator className="mt-4 bg-border/70" />
 
       <div className="pt-4">
-        <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
-          Equipped accessories
-        </h3>
-
+        <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground">Equipped accessories</h3>
         <div className="mt-3 grid grid-cols-3 gap-3">
-          {nextUnlock.accessorySlots.map((slot) => (
-            <Card
-              key={slot}
-              className={`aspect-square gap-0 rounded-3xl border-0 p-0 shadow-none ${styles.wardrobeSlot}`}
-            />
+          {['1', '2', '3'].map((slot) => (
+            <Card key={slot} className={`aspect-square gap-0 rounded-3xl border-0 p-0 shadow-none ${styles.wardrobeSlot}`} />
           ))}
         </div>
       </div>
@@ -310,39 +423,7 @@ function NextUnlockPanel({ nextUnlock }: { nextUnlock: DashboardData['nextUnlock
   );
 }
 
-function RecentActivityPanel({
-  friendsActivity,
-}: {
-  friendsActivity: DashboardData['friendsActivity'];
-}) {
-  return (
-    <Card className={`${panelCardClassName} p-5`}>
-      <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
-        Recent activity
-      </h3>
 
-      <div className="mt-3 space-y-2.5">
-        {friendsActivity.map((activity, index) => (
-          <Card
-            key={`${activity.name}-${activity.time}`}
-            className="gap-0 rounded-[1.55rem] border-0 bg-surface-container-low p-2.5 shadow-[inset_0_0_0_1px_var(--border)]"
-          >
-            <div className="flex items-start gap-3">
-              <div
-                className={`flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${friendAvatarToneClassNames[index % friendAvatarToneClassNames.length]}`}
-              >
-                {activity.initials}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm leading-6 text-foreground">
-                  <span className="font-semibold">{activity.name}</span> {activity.action}
-                </p>
-                <p className="text-xs font-medium text-on-surface-variant">{activity.time}</p>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </Card>
-  );
-}
+
+
+

@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../../backend/db/schema';
+import { ObjectId } from 'mongodb';
 
 export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
@@ -9,7 +10,6 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     }
 
     const { users, books } = await initSchemas();
-    const ObjectId = (initSchemas as any).ObjectId;
     const dbUser = await users.findOne({ clerkUserId: session.userId });
     if (!dbUser) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
@@ -83,7 +83,6 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
     }
 
     const { users, books } = await initSchemas();
-    const ObjectId = (initSchemas as any).ObjectId;
     const dbUser = await users.findOne({ clerkUserId: session.userId });
     if (!dbUser) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
