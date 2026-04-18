@@ -4,7 +4,7 @@ import type { DashboardStat } from './home-content.data';
 const statToneClassNames = {
   book: 'bg-secondary-container text-on-secondary-container',
   pages: 'bg-primary-container text-on-primary-fixed-variant',
-  streak: 'bg-tertiary-container text-on-tertiary-container',
+  rank: 'bg-tertiary-container text-on-tertiary-container',
 } as const;
 
 export function DashboardStatCard({ icon: Icon, label, tone, value }: DashboardStat) {

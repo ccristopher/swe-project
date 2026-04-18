@@ -60,7 +60,7 @@ export default function ProfilePage() {
 
           {/* Pet */}
           <img
-            src={data.pet?.imageID || "/placeholder_pet.png"}
+            src={data.pet?.imageID || "/gator....png"}
             className="w-32 h-32 z-10"
           />
 

@@ -3,9 +3,16 @@ import { Card } from '@/components/ui/card';
 import type { FinishedBook } from './home-content.data';
 import styles from './home-page-content.module.css';
 
-export function FinishedBookCard({ author, imageSrc, title }: FinishedBook) {
+type FinishedBookCardProps = FinishedBook & {
+  onClick?: () => void;
+};
+
+export function FinishedBookCard({ author, imageSrc, onClick, title }: FinishedBookCardProps) {
   return (
-    <Card className="gap-0 rounded-[1.9rem] border-0 bg-surface-container-low p-3 shadow-[0_14px_30px_var(--card-shadow)] transition-transform duration-150 hover:-translate-y-1 hover:shadow-[0_18px_34px_var(--card-shadow)]">
+    <Card
+      className={`gap-0 rounded-[1.9rem] border-0 bg-surface-container-low p-3 shadow-[0_14px_30px_var(--card-shadow)] transition-transform duration-150 hover:-translate-y-1 hover:shadow-[0_18px_34px_var(--card-shadow)] ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <div
         className={`relative mx-auto aspect-2/3 w-full max-w-40 overflow-hidden rounded-[1.45rem] ${styles.finishedBookCoverFrame}`}
       >

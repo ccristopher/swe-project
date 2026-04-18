@@ -3,18 +3,35 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { BookDetailsModal } from "@/components/books/book-details-modal";
+import type { FinishedBook } from "@/components/home/home-content.data";
 
 export default function BooksPage() {
   const { user } = useUser();
-  const [books, setBooks] = useState<any[]>([]);
-  const [selectedBook, setSelectedBook] = useState<any>(null);
+  const [books, setBooks] = useState<FinishedBook[]>([]);
+  const [selectedBook, setSelectedBook] = useState<FinishedBook | null>(null);
 
   useEffect(() => {
     if (!user?.id) return;
 
     fetch(`/api/books`)
       .then(res => res.json())
-      .then(data => setBooks(data.books));
+      .then(data => {
+        const mappedBooks: FinishedBook[] = (data.books || []).map((book: any) => ({
+          _id: book._id,
+          author: book.author,
+          completed: Boolean(book.completed),
+          coverUrl: book.coverUrl || "/defbookcover-min.jpg",
+          imageSrc: book.coverUrl || "/defbookcover-min.jpg",
+          name: book.name,
+          numberOfPages: book.numberOfPages || 0,
+          pagesRead: book.pagesRead || 0,
+          review: book.review || "",
+          title: book.name,
+        }));
+
+        setBooks(mappedBooks);
+      });
   }, [user]);
 
   return (
@@ -67,126 +84,14 @@ export default function BooksPage() {
         ))}
 
       </div>
-      {selectedBook && (
-  <div
-    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-    onClick={() => setSelectedBook(null)}
-  >
-    <div
-      className="bg-white dark:bg-[#131920] rounded-2xl p-6 w-[90%] max-w-md relative"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* CLOSE */}
-      <button
-        onClick={() => setSelectedBook(null)}
-        className="absolute top-3 right-3"
-      >
-        ✖
-      </button>
-
-      {/* COVER */}
-      <img
-        src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
-        className="w-full h-48 object-cover rounded-xl"
+      <BookDetailsModal
+        book={selectedBook}
+        onCloseAction={() => setSelectedBook(null)}
+        onBookUpdatedAction={(updatedBook) => {
+          setSelectedBook(updatedBook);
+          setBooks((prev) => prev.map((book) => (book._id === updatedBook._id ? updatedBook : book)));
+        }}
       />
-
-      {/* INFO */}
-      <h2 className="mt-4 text-lg font-bold statValue">
-        {selectedBook.name}
-      </h2>
-
-      <p className="text-sm progressLabel">
-        {selectedBook.author}
-      </p>
-
-      {/* PROGRESS BAR 🔥 */}
-      <div className="mt-4">
-        <p className="text-xs mb-1">
-          {selectedBook.pagesRead || 0} / {selectedBook.numberOfPages} pages
-        </p>
-
-        <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary"
-            style={{
-              width: `${
-                selectedBook.numberOfPages
-                  ? ((selectedBook.pagesRead || 0) / selectedBook.numberOfPages) * 100
-                  : 0
-              }%`
-            }}
-          />
-        </div>
-      </div>
-
-      {/* STATUS */}
-      <p className="text-xs mt-2">
-        {selectedBook.completed ? "✅ Completed" : "📖 In Progress"}
-      </p>
-
-      {/* REVIEW */}
-      <div className="mt-4">
-        <p className="text-sm font-bold">Your thoughts</p>
-        <p className="text-sm italic">
-          {selectedBook.review || "No review yet..."}
-        </p>
-      </div>
-
-      {/* EDIT REVIEW */}
-      <button
-        onClick={async () => {
-          const review = prompt("Update your thoughts:");
-          if (!review) return;
-
-          await fetch(`/api/books/${selectedBook._id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ review }),
-          });
-
-          setSelectedBook({ ...selectedBook, review });
-
-          setBooks((prev) =>
-            prev.map((b) =>
-              b._id === selectedBook._id ? { ...b, review } : b
-            )
-          );
-        }}
-        className="mt-4 primaryAction px-4 py-2 rounded-full text-sm"
-      >
-        Edit Review
-      </button>
-
-      {/* UPDATE PROGRESS */}
-      <button
-        onClick={async () => {
-          const pages = prompt("Update pages read:");
-          if (!pages) return;
-
-          const pagesNum = Number(pages);
-
-          await fetch(`/api/books/${selectedBook._id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pagesRead: pagesNum }),
-          });
-
-          setSelectedBook({ ...selectedBook, pagesRead: pagesNum });
-
-          setBooks((prev) =>
-            prev.map((b) =>
-              b._id === selectedBook._id ? { ...b, pagesRead: pagesNum } : b
-            )
-          );
-        }}
-        className="mt-2 text-xs underline"
-      >
-        Update Progress
-      </button>
-
-    </div>
-    </div>
-    )}
     </div>
   );
 }
