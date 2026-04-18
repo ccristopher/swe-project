@@ -47,7 +47,7 @@ export default function FriendsPage() {
             </div>
 
             <img
-              src={friend.pet?.imageID || "/default-pet.png"}
+              src={friend.pet?.imageID || "/gator....png"}
               className="w-12 h-12 rounded-full"
             />
           </Link>

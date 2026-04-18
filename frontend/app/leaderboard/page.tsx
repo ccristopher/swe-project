@@ -57,7 +57,7 @@ export default function LeaderboardPage() {
 
                 {/* optional pet */}
                 <img
-                  src={u.petImage || "/placeholder_pet.png"}
+                  src={u.petImage || "/gator....png"}
                   className="w-10 h-10"
                 />
 
