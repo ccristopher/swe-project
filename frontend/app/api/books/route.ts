@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../backend/db/schema';
+const COVER_API = "https://bookcover.longitood.com/bookcover";
 
 export async function GET() {
   try {
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
     const title = typeof body?.title === 'string' ? body.title : '';
     const author = typeof body?.author === 'string' ? body.author : '';
     const genre = typeof body?.genre === 'string' ? body.genre : '';
+
+    const isbn = typeof body?.isbn === 'string' ? body.isbn : '';
+
     const pageCount = Number(body?.pageCount);
     const completed = typeof body?.completed === 'boolean' ? body.completed : true;
 
@@ -45,18 +49,48 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
     }
 
+    const COVER_API = "https://bookcover.longitood.com/bookcover";
+
+    let coverUrl = "";
+
+    try {
+      const coverRes = await fetch(
+        `${COVER_API}?isbn=${isbn}&book_title=${encodeURIComponent(title)}&author_name=${encodeURIComponent(author)}`
+      );
+
+      if (coverRes.ok) {
+        const data = await coverRes.json();
+        coverUrl = data.url || "../../../../public/defbookcover-min.jpg";
+      }
+    } catch (err) {
+      console.log("Cover fetch failed:", err);
+    }
+
     const result = await books.insertOne({
       ownerId: dbUser._id,
       name: title,
       author,
       genre,
+      isbn,
+      coverUrl,
       numberOfPages: Math.floor(pageCount),
       completed,
     });
 
+    await users.updateOne(
+      { _id: dbUser._id },
+      {
+        $inc: {
+          booksCompleted: completed ? 1 : 0,
+          totalPagesRead: Math.floor(pageCount),
+        },
+      }
+    );
+
     return new Response(JSON.stringify({ message: 'Book logged', bookId: result.insertedId }), {
       status: 201,
     });
+
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }

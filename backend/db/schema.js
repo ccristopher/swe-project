@@ -14,7 +14,14 @@ const userSchema = {
           pattern: "^.+@.+$", 
           description: "must be a valid email" 
         },
-        createdAt: { bsonType: "date" }
+        createdAt: { bsonType: "date" },
+        friends: {
+          bsonType: "array",
+          items: { bsonType: "objectId" },
+          description: "list of friend user IDs"
+        }, 
+        totalPagesRead: { bsonType: "int" },
+        booksCompleted: { bsonType: "int" }
       }
     }
   }
@@ -26,10 +33,11 @@ const petsSchema = {
       bsonType: "object",
       required: ["name", "type", "ownerId"],
       properties: {
-        name: { bsonType: "string", description: "must be a string and is required" },
-        type: { bsonType: "string", description: "must be a string and is required" },
-        ownerId: { bsonType: "objectId", description: "must be an ObjectId and is required" },
-        imageID: { bsonType: "string", description: "must be an image path" }
+        name: { bsonType: "string" },
+        type: { bsonType: "string" },
+        ownerId: { bsonType: "objectId" },
+        imageID: { bsonType: "string" },
+        quote: { bsonType: "string" } 
       }
     }
   }
@@ -45,7 +53,10 @@ const booksSchema = {
         name: { bsonType: "string", description: "must be a string" },
         author: { bsonType: "string", description: "must be a string" },
         genre: { bsonType: "string", description: "must be a string" },
+        isbn: { bsonType: "string" },
+        coverURL: { bsonType: "string", description: "must be a URL string" },
         completed: { bsonType: "bool", description: "must be a boolean" },
+        review: { bsonType: "string" },
         numberOfPages: { bsonType: "int", description: "must be an integer" }
       }
     }
@@ -67,8 +78,7 @@ const itemsSchema = {
   }
 };
 
-const { ObjectId } = require('mongodb');
-
+// Initialize collections with validation
 async function initSchemas() {
   const db = await connectDB();
 
@@ -79,7 +89,5 @@ async function initSchemas() {
 
   return { users, pets, books, items };
 }
-
-initSchemas.ObjectId = ObjectId;
 
 module.exports = initSchemas;
