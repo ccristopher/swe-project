@@ -6,24 +6,17 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import styles from './home-page-content.module.css';
 import Link from "next/link";
+import { useHomeView } from '@/hooks/use-home-view';
+import { LandingHero } from './landing-hero';
+import { ReadingDashboard } from './reading-dashboard';
+
 
 type HomePageContentProps = {
   initialView: 'dashboard' | 'landing';
 };
 
-export function HomePageContent() {
-  return (
-    <section className="px-6 pb-16 pt-6 sm:px-8">
-      <div className="mx-auto grid min-h-[calc(100vh-8rem)] max-w-7xl gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div className="mx-auto flex w-full max-w-2xl flex-col items-center text-center lg:items-start lg:text-left">
-          <h1 className="mt-6 font-display text-5xl font-extrabold leading-tight tracking-tight text-foreground sm:text-6xl">
-            Build a reading habit that feels <span className="text-primary">fun</span>, social, and
-            easy to keep!
-          </h1>
-
-          <p className="mt-6 max-w-xl text-lg leading-8 text-on-surface-variant">
-            Log books, unlock pets and accessories, and make reading feel rewarding.
-          </p>
+export function HomePageContent({ initialView }: HomePageContentProps) {
+  const { view } = useHomeView(initialView);
 
           <AuthActions />
         </div>
@@ -157,4 +150,5 @@ function PetPreviewCard() {
       </div>
     </div>
   );
+  return view === 'dashboard' ? <ReadingDashboard /> : <LandingHero />;
 }
