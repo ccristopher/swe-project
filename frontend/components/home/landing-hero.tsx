@@ -2,7 +2,6 @@
 
 import { SignInButton, SignUpButton } from '@clerk/nextjs';
 import { ArrowRight, BookOpen, Star } from 'lucide-react';
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -90,13 +89,10 @@ function PetPreviewCard() {
             </div>
 
             <div className="relative z-10 flex w-full justify-center">
-              <Image
+              <img
                 src={landingPetPreview.imageSrc}
                 alt={landingPetPreview.imageAlt}
-                width={280}
-                height={330}
-                className="h-auto w-full max-w-70 object-contain object-center"
-                priority
+                className="image-pixel h-64 w-64 object-contain object-center"
               />
             </div>
           </Card>

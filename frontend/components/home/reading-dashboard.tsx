@@ -378,12 +378,10 @@ function PetSummaryPanel({
 
       <Card className={`relative mt-4 min-h-72 gap-0 rounded-[2.25rem] border-0 px-5 pb-5 pt-6 shadow-none ${styles.dashboardPetStage}`}>
         <div className="relative z-10 flex w-full justify-center">
-          <Image
+          <img
             src={petImageSrc}
             alt="Reading companion"
-            width={250}
-            height={270}
-            className="mx-auto mt-3 h-auto w-full max-w-56 object-contain object-center"
+            className="image-pixel mx-auto mt-3 h-48 w-48 object-contain object-center"
           />
         </div>
       </Card>
@@ -483,6 +481,3 @@ function NextUnlockPanel({
     </Card>
   );
 }
-
-
-

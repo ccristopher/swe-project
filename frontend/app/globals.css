@@ -167,3 +167,11 @@
     background: rgba(42, 157, 143, 0.28);
   }
 }
+
+@layer utilities {
+  .image-pixel {
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+  }
+}

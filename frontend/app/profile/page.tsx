@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -141,12 +140,10 @@ export default function ProfilePage() {
                 Lv {data.level?.level ?? 1}
               </div>
               <div className="absolute bottom-6 w-24 h-4 bg-black/20 blur-md rounded-full" />
-              <Image
+              <img
                 src={data.pet?.imageID || "/gator....png"}
                 alt="Pet"
-                width={192}
-                height={192}
-                className="image-pixel transition-transform duration-200 hover:scale-105"
+                className="image-pixel h-48 w-48 object-contain"
               />
             </Card>
 

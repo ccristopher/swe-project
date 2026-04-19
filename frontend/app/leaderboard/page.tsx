@@ -74,7 +74,7 @@ export default function LeaderboardPage() {
                 <img
                   src={u.petImage || "/gator....png"}
                   alt={`${u.username || "Reader"} pet`}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="image-pixel h-10 w-10 rounded-full object-contain"
                 />
 
                 <span className="font-semibold">

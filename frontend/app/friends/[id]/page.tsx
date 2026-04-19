@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
 
 export default function FriendProfilePage() {
@@ -60,7 +59,7 @@ export default function FriendProfilePage() {
           <img
             src={data.pet?.imageID || "/gator....png"}
             alt="Pet"
-            className="w-32 h-32 z-10 mx-auto"
+            className="image-pixel z-10 mx-auto h-32 w-32 object-contain"
           />
 
           <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
@@ -80,12 +79,11 @@ export default function FriendProfilePage() {
         {/* PET SECTION */}
         <Card className="rounded-[2.5rem] bg-secondary-container p-6 flex flex-col items-center text-center">
           
-          <div className="relative h-40 w-40">
-            <Image
+          <div className="relative flex h-48 w-48 items-center justify-center">
+            <img
               src={data.pet?.imageID || "/gator....png"}
               alt="Pet"
-              fill
-              className="object-contain image-pixel"
+              className="image-pixel h-48 w-48 object-contain"
             />
           </div>
 
