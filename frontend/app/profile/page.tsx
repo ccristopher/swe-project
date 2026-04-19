@@ -55,9 +55,13 @@ export default function ProfilePage() {
 
           <div className="petStageGlow absolute inset-0" />
 
-          {/* Leaderboard badge */}
+          <div className="absolute top-3 left-3 starBadge px-3 py-1 rounded-full text-sm">
+            Lv {data.level?.level ?? 1}
+          </div>
+
+          {/* Leaderboard badge (among friends) */}
           <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm">
-            #{data.user?.rank || "-"}
+            #{data.user?.rank ?? "-"}
           </div>
 
           {/* Pet */}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import type { CurrentRead, FinishedBook } from '@/components/home/home-content.data';
+import { sumPagesFromBooks } from '@/lib/readingProgress';
 
 type ApiBook = {
   _id?: string;
@@ -40,6 +41,8 @@ export type UseDashboardBooksResult = {
   petImageSrc: string;
   totalBooks: number;
   totalPagesRead: number;
+  unlockedRewards: string[];
+  addUnlockedRewards: (ids: string[]) => void;
   updateBookInDashboard: (updatedBook: UseDashboardBookUpdate) => void;
 };
 
@@ -146,6 +149,12 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const [books, setBooks] = useState<ApiBook[] | null>(null);
   const [petImageSrc, setPetImageSrc] = useState<string | null>(null);
   const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
+  const [unlockedRewards, setUnlockedRewards] = useState<string[]>([]);
+
+  function addUnlockedRewards(ids: string[]) {
+    if (!ids.length) return;
+    setUnlockedRewards((prev) => Array.from(new Set([...prev, ...ids])));
+  }
 
   function updateBookInDashboard(updatedBook: DashboardBookUpdate) {
     setBooks((previousBooks) => {
@@ -177,6 +186,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           setBooks([]);
           setPetImageSrc('/gator....png');
           setLeaderboardRank(null);
+          setUnlockedRewards([]);
         }
         return;
       }
@@ -185,6 +195,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
         setBooks(null);
         setPetImageSrc(null);
         setLeaderboardRank(null);
+        setUnlockedRewards([]);
       }
 
       try {
@@ -211,6 +222,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           if (isMounted) {
             setPetImageSrc('/gator....png');
             setLeaderboardRank(null);
+            setUnlockedRewards([]);
           }
         } else {
           const profileData = await profileResponse.json();
@@ -218,6 +230,11 @@ export function useDashboardBooks(): UseDashboardBooksResult {
             typeof profileData?.pet?.imageID === 'string' && profileData.pet.imageID.trim()
               ? profileData.pet.imageID
               : '/gator....png';
+
+          const rawRewards = profileData?.user?.unlockedRewards;
+          const rewardsList = Array.isArray(rawRewards)
+            ? rawRewards.filter((x: unknown) => typeof x === 'string')
+            : [];
 
           const currentBooksCompleted = Number(profileData?.user?.booksCompleted || 0);
           let nextRank: number | null = null;
@@ -233,6 +250,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           if (isMounted) {
             setPetImageSrc(petImage);
             setLeaderboardRank(nextRank);
+            setUnlockedRewards(rewardsList);
           }
         }
       } catch {
@@ -240,6 +258,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           setBooks([]);
           setPetImageSrc('/gator....png');
           setLeaderboardRank(null);
+          setUnlockedRewards([]);
         }
       }
     }
@@ -256,21 +275,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const allBooks = books ?? [];
   const totalBooks = allBooks.length;
   const completedBooks = allBooks.filter((book) => Boolean(book.completed)).length;
-  const totalPagesRead = allBooks.reduce((sum, book) => {
-    const pagesRead = Number(book.pagesRead);
-    const isComplete = Boolean(book.completed);
-    const numberOfPages = Number(book.numberOfPages);
-
-    if (Number.isFinite(pagesRead) && pagesRead >= 0) {
-      return sum + pagesRead;
-    }
-
-    if (isComplete && Number.isFinite(numberOfPages) && numberOfPages > 0) {
-      return sum + numberOfPages;
-    }
-
-    return sum;
-  }, 0);
+  const totalPagesRead = sumPagesFromBooks(allBooks);
 
   return {
     completedBooks,
@@ -282,6 +287,8 @@ export function useDashboardBooks(): UseDashboardBooksResult {
     petImageSrc: petImageSrc ?? '/gator....png',
     totalBooks,
     totalPagesRead,
+    unlockedRewards,
+    addUnlockedRewards,
     updateBookInDashboard,
   };
 }

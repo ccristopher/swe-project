@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { labelForRewardId } from "@/lib/levelRewards";
 
 export default function LogBookPage() {
   const router = useRouter();
@@ -34,6 +35,12 @@ export default function LogBookPage() {
     setLoading(false);
 
     if (res.ok) {
+      const ids = Array.isArray(data.newLevelRewards)
+        ? data.newLevelRewards.filter((x: unknown) => typeof x === "string")
+        : [];
+      if (ids.length) {
+        alert(`You earned: ${ids.map(labelForRewardId).join(", ")}`);
+      }
       router.push("/profile");
     } else {
       alert(data.error || "Something went wrong");

@@ -5,7 +5,10 @@ import type { FinishedBook } from "@/components/home/home-content.data";
 type BookDetailsModalProps = {
   book: FinishedBook | null;
   onCloseAction: () => void;
-  onBookUpdatedAction?: (updatedBook: FinishedBook) => void;
+  onBookUpdatedAction?: (
+    updatedBook: FinishedBook,
+    meta?: { newLevelRewards?: string[] }
+  ) => void;
 };
 
 type BookPatch = {
@@ -32,12 +35,17 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
       return;
     }
 
+    const data = await response.json().catch(() => ({}));
+    const newLevelRewards = Array.isArray(data?.newLevelRewards)
+      ? data.newLevelRewards.filter((x: unknown) => typeof x === "string")
+      : [];
+
     const updatedBook: FinishedBook = {
       ...currentBook,
       ...fields,
     };
 
-    onBookUpdatedAction?.(updatedBook);
+    onBookUpdatedAction?.(updatedBook, { newLevelRewards });
   }
 
   return (
