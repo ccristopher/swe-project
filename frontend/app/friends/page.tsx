@@ -83,6 +83,7 @@ export default function FriendsPage() {
 
                       <img
                         src={friend.pet?.imageID || "/gator....png"}
+                        alt={`${friend.username || "Friend"} pet`}
                         className="h-10 w-10 rounded-full object-cover"
                       />
 

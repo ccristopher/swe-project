@@ -51,15 +51,16 @@ export default function FriendProfilePage() {
       <div className="mx-auto max-w-3xl space-y-6">
 
         {/* HEADER (same vibe as profile) */}
-        <Card className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)] text-center">
+        <Card className="relative rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)] text-center">
           
           <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
             Friend Profile
           </p>
 
           <img
-            src={data.pet?.imageID}
-            className="w-32 h-32 z-10"
+            src={data.pet?.imageID || "/gator....png"}
+            alt="Pet"
+            className="w-32 h-32 z-10 mx-auto"
           />
 
           <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
@@ -111,6 +112,7 @@ export default function FriendProfilePage() {
               >
                 <img
                   src={book.coverUrl || "/defbookcover-min.jpg"}
+                  alt={`${book.name} cover`}
                   className="w-full h-28 object-cover rounded-md"
                 />
                 <p className="text-xs mt-1 truncate">
@@ -119,7 +121,7 @@ export default function FriendProfilePage() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
       </div>
     </section>

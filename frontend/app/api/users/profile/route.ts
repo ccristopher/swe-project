@@ -8,12 +8,6 @@ function toPublicPath(value: unknown, fallback: string) {
   return value.startsWith("/") ? value : `/${value}`;
 }
 
-function toPublicPath(value: unknown, fallback: string) {
-  if (typeof value !== "string" || !value.trim()) return fallback;
-  if (/^https?:\/\//i.test(value)) return value;
-  return value.startsWith("/") ? value : `/${value}`;
-}
-
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId");

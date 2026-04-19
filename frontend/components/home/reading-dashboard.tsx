@@ -146,7 +146,6 @@ export function ReadingDashboard() {
               petImageSrc={petImageSrc}
               totalPagesRead={totalPagesRead}
             />
-            <NextUnlockPanel totalPagesRead={totalPagesRead} />
             <NextUnlockPanel
               totalPagesRead={totalPagesRead}
               unlockedRewards={unlockedRewards}
@@ -358,11 +357,6 @@ function PetSummaryPanel({
   petImageSrc: string;
   totalPagesRead: number;
 }) {
-  const pagesPerLevel = 150;
-  const level = Math.max(1, Math.floor(totalPagesRead / pagesPerLevel) + 1);
-  const pagesIntoLevel = totalPagesRead % pagesPerLevel;
-  const pagesToNextLevel = pagesPerLevel - pagesIntoLevel || pagesPerLevel;
-  const levelProgress = Math.min(100, Math.round((pagesIntoLevel / pagesPerLevel) * 100));
   const {
     level,
     pagesToNextLevel,
@@ -489,8 +483,6 @@ function NextUnlockPanel({
     </Card>
   );
 }
-
-
 
 
 

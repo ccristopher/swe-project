@@ -49,6 +49,37 @@ export default function ProfilePage() {
     setQuote(typeof saved.quote === "string" ? saved.quote : newQuote);
   }
 
+  async function saveUsername() {
+    const nextUsername = username.trim();
+
+    const res = await fetch("/api/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: nextUsername }),
+    });
+
+    const saved = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      alert(saved?.error || "Could not save username");
+      return;
+    }
+
+    setUsername(saved.username);
+    setData((prev: any) =>
+      prev
+        ? {
+            ...prev,
+            user: {
+              ...prev.user,
+              username: saved.username,
+            },
+          }
+        : prev
+    );
+    setEditingName(false);
+  }
+
   if (!data) {
     return (
       <div className="px-6 py-10 text-center text-on-surface-variant">
@@ -64,7 +95,7 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-5xl space-y-6">
 
         {/* HERO / PET */}
-        <Card className="overflow-hidden rounded-[2.5rem] border-0 bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+        <Card className="relative overflow-hidden rounded-[2.5rem] border-0 bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
@@ -80,6 +111,7 @@ export default function ProfilePage() {
                   />
                   <button
                     onClick={saveUsername}
+                    type="button"
                     className="text-sm font-bold text-primary"
                   >
                     Save
@@ -94,12 +126,20 @@ export default function ProfilePage() {
                 </h1>
               )}
             </div>
+
+            {/* Leaderboard badge (among friends) */}
+            <div className="starBadge px-3 py-1 rounded-full text-sm">
+              #{data.user?.rank ?? "-"}
+            </div>
           </div>
 
           <div className="mt-6 grid gap-6 md:grid-cols-[1fr_0.9fr] md:items-center">
 
             {/* PET */}
             <Card className="relative min-h-72 rounded-[2rem] border-0 bg-secondary-container flex items-center justify-center">
+              <div className="absolute top-3 left-3 starBadge px-3 py-1 rounded-full text-sm">
+                Lv {data.level?.level ?? 1}
+              </div>
               <div className="absolute bottom-6 w-24 h-4 bg-black/20 blur-md rounded-full" />
               <Image
                 src={data.pet?.imageID || "/gator....png"}
@@ -114,7 +154,10 @@ export default function ProfilePage() {
             <div className="space-y-4">
 
               {/* Quote Display */}
-              <Card className="rounded-[1.75rem] border-0 bg-surface-container-highest p-5">
+              <Card
+                onClick={updateQuote}
+                className="cursor-pointer rounded-[1.75rem] border-0 bg-surface-container-highest p-5"
+              >
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
                   Quote
                 </p>
@@ -124,46 +167,14 @@ export default function ProfilePage() {
                 </p>
               </Card>
 
-          <div className="absolute top-3 left-3 starBadge px-3 py-1 rounded-full text-sm">
-            Lv {data.level?.level ?? 1}
-          </div>
-
-          {/* Leaderboard badge (among friends) */}
-          <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm">
-            #{data.user?.rank ?? "-"}
-          </div>
-
-          {/* Pet */}
-          <img
-            src={data.pet?.imageID || "/gator....png"}
-            className="w-32 h-32 z-10"
-          />
-
-          {/* Username */}
-          <h1 className="text-xl font-bold statValue mt-2 z-10">
-            {data.user?.username}
-          </h1>
-
-          {/* Quote bubble */}
-          <div
-            onClick={updateQuote}
-            className="mt-4 cursor-pointer secondaryAction px-4 py-3 rounded-xl max-w-xs z-10"
-          >
-            <p className="progressLabel">
-              {quote || "💬 Share a quote!"}
-            </p>
-          </div>
-        </div>
-
-                <Link href="/books">
-                  <Button className="h-12 rounded-full bg-surface-container px-5 text-sm font-semibold text-foreground">
-                    Books
-                  </Button>
-                </Link>
-
-              </div>
+              <Link href="/books">
+                <Button className="h-12 rounded-full bg-surface-container px-5 text-sm font-semibold text-foreground">
+                  Books
+                </Button>
+              </Link>
 
             </div>
+
           </div>
         </Card>
 
@@ -179,17 +190,6 @@ export default function ProfilePage() {
                 View all
               </Link>
             </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-              {booksPreview?.map((book: any) => (
-                <div
-                  key={book._id}
-                  onClick={() => setSelectedBook(book)}
-                  className="secondaryAction rounded-lg overflow-hidden p-2 cursor-pointer hover:-translate-y-1 transition"
-                >
-                <img
-                  src={book.coverUrl || "/defbookcover-min.jpg"}
-                  className="w-full h-32 object-cover rounded-md"
-                />
 
             {booksPreview?.length ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
@@ -220,104 +220,103 @@ export default function ProfilePage() {
             )}
           </Card>
         </section>
-            ))}
-          </div>
-        </div>
-
       </div>
+
       {selectedBook && (
-  <div
-    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-    onClick={() => setSelectedBook(null)}
-  >
-    <div
-      className="bg-white dark:bg-[#131920] rounded-2xl p-6 w-[90%] max-w-md relative"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* CLOSE */}
-      <button
-        onClick={() => setSelectedBook(null)}
-        className="absolute top-3 right-3"
-      >
-        ✖
-      </button>
-
-      {/* COVER */}
-      <img
-        src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
-        className="w-full h-48 object-cover rounded-xl"
-      />
-
-      {/* TITLE */}
-      <h2 className="mt-4 text-lg font-bold statValue">
-        {selectedBook.name}
-      </h2>
-
-      <p className="text-sm progressLabel">
-        {selectedBook.author}
-      </p>
-
-      {/* PROGRESS BAR */}
-      <div className="mt-4">
-        <p className="text-xs mb-1">
-          {selectedBook.pagesRead || 0} / {selectedBook.numberOfPages} pages
-        </p>
-
-          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary"
-              style={{
-                width: `${
-                  selectedBook.numberOfPages
-                    ? ((selectedBook.pagesRead || 0) / selectedBook.numberOfPages) * 100
-                    : 0
-                }%`
-              }}
-            />
-          </div>
-        </div>
-
-          {/* STATUS */}
-          <p className="text-xs mt-2">
-            {selectedBook.completed ? "✅ Completed" : "📖 In Progress"}
-          </p>
-
-          {/* REVIEW */}
-          <div className="mt-4">
-            <p className="text-sm font-bold">Your thoughts</p>
-            <p className="text-sm italic">
-              {selectedBook.review || "No review yet..."}
-            </p>
-          </div>
-
-          {/* EDIT REVIEW */}
-          <button
-            onClick={async () => {
-              const review = prompt("Update your thoughts:");
-              if (!review) return;
-
-              await fetch(`/api/books/${selectedBook._id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ review }),
-              });
-
-              // update UI instantly
-              setSelectedBook({ ...selectedBook, review });
-
-              setData((prev: any) => ({
-                ...prev,
-                books: prev.books.map((b: any) =>
-                  b._id === selectedBook._id ? { ...b, review } : b
-                ),
-              }));
-            }}
-            className="mt-4 primaryAction px-4 py-2 rounded-full text-sm"
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setSelectedBook(null)}
+        >
+          <div
+            className="bg-white dark:bg-[#131920] rounded-2xl p-6 w-[90%] max-w-md relative"
+            onClick={(e) => e.stopPropagation()}
           >
-            Edit Review
-          </button>
+            {/* CLOSE */}
+            <button
+              onClick={() => setSelectedBook(null)}
+              className="absolute top-3 right-3"
+            >
+              ✖
+            </button>
+
+            {/* COVER */}
+            <img
+              src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
+              alt={`${selectedBook.name} cover`}
+              className="w-full h-48 object-cover rounded-xl"
+            />
+
+            {/* TITLE */}
+            <h2 className="mt-4 text-lg font-bold statValue">
+              {selectedBook.name}
+            </h2>
+
+            <p className="text-sm progressLabel">
+              {selectedBook.author}
+            </p>
+
+            {/* PROGRESS BAR */}
+            <div className="mt-4">
+              <p className="text-xs mb-1">
+                {selectedBook.pagesRead || 0} / {selectedBook.numberOfPages} pages
+              </p>
+
+              <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary"
+                  style={{
+                    width: `${
+                      selectedBook.numberOfPages
+                        ? ((selectedBook.pagesRead || 0) / selectedBook.numberOfPages) * 100
+                        : 0
+                    }%`
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* STATUS */}
+            <p className="text-xs mt-2">
+              {selectedBook.completed ? "✅ Completed" : "📖 In Progress"}
+            </p>
+
+            {/* REVIEW */}
+            <div className="mt-4">
+              <p className="text-sm font-bold">Your thoughts</p>
+              <p className="text-sm italic">
+                {selectedBook.review || "No review yet..."}
+              </p>
+            </div>
+
+            {/* EDIT REVIEW */}
+            <button
+              onClick={async () => {
+                const review = prompt("Update your thoughts:");
+                if (!review) return;
+
+                await fetch(`/api/books/${selectedBook._id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ review }),
+                });
+
+                // update UI instantly
+                setSelectedBook({ ...selectedBook, review });
+
+                setData((prev: any) => ({
+                  ...prev,
+                  books: prev.books.map((b: any) =>
+                    b._id === selectedBook._id ? { ...b, review } : b
+                  ),
+                }));
+              }}
+              className="mt-4 primaryAction px-4 py-2 rounded-full text-sm"
+            >
+              Edit Review
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
