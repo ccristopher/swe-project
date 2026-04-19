@@ -1,5 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../backend/db/schema';
+import { sumPagesFromBooks } from '@/lib/readingProgress';
+import { buildUserProgressUpdate } from '@/lib/levelRewards';
 const COVER_API = "https://bookcover.longitood.com/bookcover";
 
 function toPublicPath(value: unknown, fallback: string) {
@@ -59,6 +61,9 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
     }
 
+    const booksBefore = await books.find({ ownerId: dbUser._id }).toArray();
+    const oldTotalPages = sumPagesFromBooks(booksBefore);
+
     let coverUrl = '/defbookcover-min.jpg';
 
     try {
@@ -85,19 +90,20 @@ export async function POST(req: Request) {
       completed,
     });
 
-    await users.updateOne(
-      { _id: dbUser._id },
-      {
-        $inc: {
-          booksCompleted: completed ? 1 : 0,
-          totalPagesRead: Math.floor(pageCount),
-        },
-      }
-    );
+    const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
+    const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
+    await users.updateOne({ _id: dbUser._id }, userUpdate);
 
-    return new Response(JSON.stringify({ message: 'Book logged', bookId: result.insertedId }), {
-      status: 201,
-    });
+    const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
+
+    return new Response(
+      JSON.stringify({
+        message: 'Book logged',
+        bookId: result.insertedId,
+        newLevelRewards: newRewards,
+      }),
+      { status: 201 }
+    );
 
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });

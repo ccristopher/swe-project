@@ -31,6 +31,10 @@ export default function FriendProfilePage() {
             className="w-32 h-32 z-10"
           />
 
+          <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
+            Lv {data.level?.level ?? 1}
+          </div>
+
           <h1 className="text-xl font-bold statValue mt-2">
             {data.user?.username}
           </h1>

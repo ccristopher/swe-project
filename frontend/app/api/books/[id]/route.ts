@@ -1,6 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../../backend/db/schema';
 import { ObjectId } from 'mongodb';
+import { sumPagesFromBooks } from '@/lib/readingProgress';
+import { buildUserProgressUpdate } from '@/lib/levelRewards';
 
 export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
@@ -60,6 +62,9 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       });
     }
 
+    const booksBefore = await books.find({ ownerId: dbUser._id }).toArray();
+    const oldTotalPages = sumPagesFromBooks(booksBefore);
+
     const result = await books.updateOne(
       { _id: new ObjectId(id), ownerId: dbUser._id },
       { $set: updateDoc }
@@ -69,7 +74,16 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       return new Response(JSON.stringify({ error: 'Book not found' }), { status: 404 });
     }
 
-    return new Response(JSON.stringify({ message: 'Book updated' }), { status: 200 });
+    const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
+    const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
+    await users.updateOne({ _id: dbUser._id }, userUpdate);
+
+    const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
+
+    return new Response(
+      JSON.stringify({ message: 'Book updated', newLevelRewards: newRewards }),
+      { status: 200 }
+    );
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
@@ -93,6 +107,9 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
       return new Response(JSON.stringify({ error: 'Invalid book id' }), { status: 400 });
     }
 
+    const booksBefore = await books.find({ ownerId: dbUser._id }).toArray();
+    const oldTotalPages = sumPagesFromBooks(booksBefore);
+
     const result = await books.deleteOne({
       _id: new ObjectId(id),
       ownerId: dbUser._id,
@@ -102,7 +119,16 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
       return new Response(JSON.stringify({ error: 'Book not found' }), { status: 404 });
     }
 
-    return new Response(JSON.stringify({ message: 'Book deleted' }), { status: 200 });
+    const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
+    const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
+    await users.updateOne({ _id: dbUser._id }, userUpdate);
+
+    const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
+
+    return new Response(
+      JSON.stringify({ message: 'Book deleted', newLevelRewards: newRewards }),
+      { status: 200 }
+    );
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }

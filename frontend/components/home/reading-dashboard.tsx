@@ -5,6 +5,8 @@ import { BarChart3, BookOpen, ChevronRight, Trophy } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useDashboardBooks } from '@/hooks/use-dashboard-books';
+import { getLevelFromTotalPages, READING_PAGES_PER_LEVEL } from '@/lib/readingProgress';
+import { labelForRewardId, rewardLabelForLevel } from '@/lib/levelRewards';
 import { BookDetailsModal } from '@/components/books/book-details-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,8 @@ export function ReadingDashboard() {
     displayName,
     isDashboardLoading,
     leaderboardRank,
+    unlockedRewards,
+    addUnlockedRewards,
     petImageSrc,
     recentBooks,
     totalBooks,
@@ -114,6 +118,12 @@ export function ReadingDashboard() {
                   return;
                 }
 
+                const data = await response.json().catch(() => ({}));
+                const newLevelRewards = Array.isArray(data?.newLevelRewards)
+                  ? data.newLevelRewards.filter((x: unknown) => typeof x === "string")
+                  : [];
+                if (newLevelRewards.length) addUnlockedRewards(newLevelRewards);
+
                 updateBookInDashboard({
                   _id: currentRead._id,
                   pagesRead: Math.floor(pagesNum),
@@ -136,7 +146,10 @@ export function ReadingDashboard() {
               petImageSrc={petImageSrc}
               totalPagesRead={totalPagesRead}
             />
-            <NextUnlockPanel totalPagesRead={totalPagesRead} />
+            <NextUnlockPanel
+              totalPagesRead={totalPagesRead}
+              unlockedRewards={unlockedRewards}
+            />
           </aside>
         </div>
       </div>
@@ -144,9 +157,10 @@ export function ReadingDashboard() {
       <BookDetailsModal
         book={selectedBook}
         onCloseAction={() => setSelectedBook(null)}
-        onBookUpdatedAction={(updatedBook) => {
+        onBookUpdatedAction={(updatedBook, meta) => {
           setSelectedBook(updatedBook);
           updateBookInDashboard(updatedBook);
+          if (meta?.newLevelRewards?.length) addUnlockedRewards(meta.newLevelRewards);
         }}
       />
     </section>
@@ -343,11 +357,11 @@ function PetSummaryPanel({
   petImageSrc: string;
   totalPagesRead: number;
 }) {
-  const pagesPerLevel = 150;
-  const level = Math.max(1, Math.floor(totalPagesRead / pagesPerLevel) + 1);
-  const pagesIntoLevel = totalPagesRead % pagesPerLevel;
-  const pagesToNextLevel = pagesPerLevel - pagesIntoLevel || pagesPerLevel;
-  const levelProgress = Math.min(100, Math.round((pagesIntoLevel / pagesPerLevel) * 100));
+  const {
+    level,
+    pagesToNextLevel,
+    levelProgressPercent: levelProgress,
+  } = getLevelFromTotalPages(totalPagesRead, READING_PAGES_PER_LEVEL);
 
   return (
     <Card className={`${panelCardClassName} overflow-hidden p-5`}>
@@ -388,35 +402,82 @@ function PetSummaryPanel({
   );
 }
 
-function NextUnlockPanel({ totalPagesRead }: { totalPagesRead: number }) {
-  const unlockEveryPages = 100;
-  const pagesTowardUnlock = totalPagesRead % unlockEveryPages;
-  const progress = Math.round((pagesTowardUnlock / unlockEveryPages) * 100);
-  const remaining = unlockEveryPages - pagesTowardUnlock || unlockEveryPages;
+function NextUnlockPanel({
+  totalPagesRead,
+  unlockedRewards,
+}: {
+  totalPagesRead: number;
+  unlockedRewards: string[];
+}) {
+  const { level, pagesToNextLevel, levelProgressPercent } = getLevelFromTotalPages(
+    totalPagesRead,
+    READING_PAGES_PER_LEVEL
+  );
+  const nextLevel = level + 1;
+  const nextRewardName = rewardLabelForLevel(nextLevel);
+
+  const sortedIds = [...unlockedRewards].sort((a, b) => {
+    const na = Number(/^lvl-(\d+)$/.exec(a)?.[1] ?? 0);
+    const nb = Number(/^lvl-(\d+)$/.exec(b)?.[1] ?? 0);
+    return na - nb;
+  });
+  const showcase = sortedIds.slice(-3).reverse();
 
   return (
     <Card className={`${panelCardClassName} p-5`}>
-      <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">Next unlock</p>
-      <h3 className="mt-2 font-display text-[1.85rem] font-extrabold tracking-tight text-foreground">[Accessory]</h3>
+      <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+        Next level reward
+      </p>
+      <h3 className="mt-2 font-display text-[1.85rem] font-extrabold tracking-tight text-foreground">
+        {nextRewardName || "Keep reading!"}
+      </h3>
 
-      <p className="mt-1 text-sm font-semibold text-on-primary-fixed-variant">[Genre] reward</p>
-      <p className="mt-3 text-base font-semibold text-foreground">{remaining} more pages to unlock</p>
+      <p className="mt-1 text-sm font-semibold text-on-primary-fixed-variant">
+        Reach level {nextLevel}
+      </p>
+      <p className="mt-3 text-base font-semibold text-foreground">
+        {pagesToNextLevel} more pages to level up
+      </p>
 
       <Progress
-        aria-label="Next unlock progress"
+        aria-label="Progress toward next level reward"
         className="mt-3 h-4 rounded-full bg-surface-container"
         indicatorClassName="rounded-full bg-tertiary"
-        value={progress}
+        value={levelProgressPercent}
       />
 
       <Separator className="mt-4 bg-border/70" />
 
       <div className="pt-4">
-        <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground">Equipped accessories</h3>
+        <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
+          Earned rewards
+        </h3>
+        <p className="mt-1 text-sm text-on-surface-variant">
+          One unlock each time you reach a new level (150 pages per level).
+        </p>
         <div className="mt-3 grid grid-cols-3 gap-3">
-          {['1', '2', '3'].map((slot) => (
-            <Card key={slot} className={`aspect-square gap-0 rounded-3xl border-0 p-0 shadow-none ${styles.wardrobeSlot}`} />
-          ))}
+          {[0, 1, 2].map((i) => {
+            const id = showcase[i];
+            return (
+              <Card
+                key={i}
+                className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-3xl border-0 p-2 text-center shadow-none ${styles.wardrobeSlot}`}
+              >
+                {id ? (
+                  <>
+                    <span className="text-2xl" aria-hidden>
+                      🎁
+                    </span>
+                    <span className="text-xs font-semibold leading-tight text-foreground">
+                      {labelForRewardId(id)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-xs text-on-surface-variant">Empty</span>
+                )}
+              </Card>
+            );
+          })}
         </div>
       </div>
     </Card>
