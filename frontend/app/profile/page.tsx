@@ -28,16 +28,18 @@ export default function ProfilePage() {
     const newQuote = prompt("Write a quote from your book:");
     if (!newQuote) return;
 
-    await fetch("/api/users/quote", {
+    const res = await fetch("/api/users/quote", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: user?.id,
-        quote: newQuote,
-      }),
+      body: JSON.stringify({ quote: newQuote }),
     });
+    if (!res.ok) {
+      alert("Could not save quote");
+      return;
+    }
 
-    setQuote(newQuote);
+    const saved = await res.json();
+    setQuote(typeof saved.quote === "string" ? saved.quote : newQuote);
   }
 
   if (!data) return <div className="p-6">Loading...</div>;
