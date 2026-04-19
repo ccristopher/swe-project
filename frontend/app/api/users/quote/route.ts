@@ -1,19 +1,38 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../backend/db/mongo";
+import { auth } from "@clerk/nextjs/server";
+import initSchemas from "../../../../../backend/db/schema";
+import { clampQuote } from "@/lib/quoteUtils";
 
 export async function PUT(req: Request) {
   try {
-    const { quote, userId } = await req.json();
+    const session = await auth();
+    if (!session.userId) {
+      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+    }
 
-    const db = await connectDB();
+    const body = await req.json();
+    const quote = clampQuote(typeof body.quote === "string" ? body.quote : "");
 
-    await db.collection("pets").updateOne(
-      { ownerId: userId },
-      { $set: { quote: quote } }
+    const { users, pets } = await initSchemas();
+    const user = await users.findOne({ clerkUserId: session.userId });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const result = await pets.updateOne(
+      { ownerId: user._id },
+      { $set: { quote } }
     );
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "No pet found for this user" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ ok: true, quote });
+  } catch {
     return NextResponse.json(
       { error: "Failed to update quote" },
       { status: 500 }
