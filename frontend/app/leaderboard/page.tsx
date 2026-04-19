@@ -18,31 +18,46 @@ export default function LeaderboardPage() {
     };
 
     fetchLeaderboard();
-
-    const interval = setInterval(fetchLeaderboard, 60000); // refresh every minute (testing)
+    const interval = setInterval(fetchLeaderboard, 60000);
 
     return () => clearInterval(interval);
   }, [user]);
 
   return (
-    <div className="flex justify-center p-4">
-      <div className="w-full max-w-md md:max-w-2xl space-y-6">
+    <section className="px-6 pb-16 pt-6 sm:px-8">
+      <div className="mx-auto max-w-3xl space-y-6">
 
-        {/* HEADER */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/profile"
-            className="primaryAction px-4 py-2 rounded-full text-sm"
-          >
-            ← Back
-          </Link>
+    {/* HEADER */}
+    <div className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+      <div className="flex items-start justify-between gap-4">
 
-          <h1 className="text-2xl font-bold statValue">
+        {/* LEFT */}
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+            Ranking
+          </p>
+
+          <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
             Leaderboard 🏆
           </h1>
+
+          <p className="mt-2 text-sm text-on-surface-variant">
+            See who’s reading the most books this week.
+          </p>
         </div>
 
-        {/* LEADERBOARD LIST */}
+        {/* RIGHT (ADD FRIEND) */}
+        <Link
+          href="/friends"
+          className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105"
+        >
+          Add Friend
+        </Link>
+
+      </div>
+    </div>
+
+        {/* LEADERBOARD */}
         <div className="space-y-3">
           {leaderboard.map((u, index) => (
             <div
@@ -66,20 +81,31 @@ export default function LeaderboardPage() {
                 </span>
               </div>
 
-              {/* RIGHT SIDE */}
-              <div className="text-right">
-                <p className="statValue font-bold">
-                  {u.booksCompleted || 0}
-                </p>
-                <p className="text-xs progressLabel">
-                  books
-                </p>
+                  <img
+                    src={u.petImage || "/gator....png"}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+
+                  <span className="font-semibold text-on-surface">
+                    {u.username}
+                  </span>
+                </div>
+
+                {/* RIGHT */}
+                <div className="text-right">
+                  <p className="text-lg font-extrabold text-primary">
+                    {u.booksCompleted || 0}
+                  </p>
+                  <p className="text-xs text-on-surface-variant">
+                    books
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
       </div>
-    </div>
+    </section>
   );
 }

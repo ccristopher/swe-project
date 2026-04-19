@@ -275,6 +275,21 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const allBooks = books ?? [];
   const totalBooks = allBooks.length;
   const completedBooks = allBooks.filter((book) => Boolean(book.completed)).length;
+  const totalPagesRead = allBooks.reduce((sum, book) => {
+    const pagesRead = Number(book.pagesRead);
+    const isComplete = Boolean(book.completed);
+    const numberOfPages = Number(book.numberOfPages);
+
+    if (Number.isFinite(pagesRead) && pagesRead >= 0) {
+      return sum + pagesRead;
+    }
+
+    if (isComplete && Number.isFinite(numberOfPages) && numberOfPages > 0) {
+      return sum + numberOfPages;
+    }
+
+    return sum;
+  }, 0);
   const totalPagesRead = sumPagesFromBooks(allBooks);
 
   return {

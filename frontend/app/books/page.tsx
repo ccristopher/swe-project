@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { BookDetailsModal } from "@/components/books/book-details-modal";
+import type { FinishedBook } from "@/components/home/home-content.data";
 import Link from "next/link";
 import { BookDetailsModal } from "@/components/books/book-details-modal";
 import type { FinishedBook } from "@/components/home/home-content.data";
@@ -35,18 +37,22 @@ export default function BooksPage() {
   }, [user]);
 
   return (
-    <div className="flex justify-center p-4">
-      <div className="w-full max-w-3xl space-y-4">
+    <section className="px-6 pb-16 pt-6 sm:px-8">
+      <div className="mx-auto max-w-3xl space-y-6">
 
-      <div className="flex items-center justify-between">
-        <Link href="/profile" className="primaryAction px-4 py-2 rounded-full text-sm">
-            ← Back
-        </Link>
+        {/* HEADER */}
+          <div className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+            <div className="flex items-start justify-between gap-4">
+              
+              {/* LEFT */}
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                  Library
+                </p>
 
-        <h1 className="text-2xl font-bold statValue">
-            Your Library 📚
-        </h1>
-        </div>
+                <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
+                  Your Books 📚
+                </h1>
 
         {books.map((book) => (
           <div
@@ -78,7 +84,15 @@ export default function BooksPage() {
                 <p className="mt-2 text-sm italic">
                   “{book.review}”
                 </p>
-              )}
+              </div>
+
+              {/* RIGHT (ADD BUTTON) */}
+              <Link href="/books/log">
+                <div className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105">
+                  Add Book
+                </div>
+              </Link>
+
             </div>
           </div>
         ))}

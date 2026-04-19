@@ -2,29 +2,60 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
 
 export default function FriendProfilePage() {
   const { id } = useParams();
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
 
-    fetch(`/api/users/profile?userId=${id}`)
-      .then(res => res.json())
-      .then(setData);
+    async function load() {
+      setLoading(true);
+
+      try {
+        const res = await fetch(`/api/users/profile?userId=${id}`);
+        const json = await res.json();
+        setData(json);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
   }, [id]);
 
-  if (!data) return <div className="p-6">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="p-6 text-center text-on-surface-variant">
+        Loading profile...
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="p-6 text-center text-on-surface-variant">
+        User not found
+      </div>
+    );
+  }
 
   const booksPreview = data.books?.slice(0, 6);
 
   return (
-    <div className="flex justify-center p-6">
-      <div className="w-full max-w-md space-y-6">
+    <section className="px-6 pb-16 pt-6 sm:px-8">
+      <div className="mx-auto max-w-3xl space-y-6">
 
-        {/* PET */}
-        <div className="petStage relative h-[50vh] rounded-2xl flex flex-col items-center justify-center text-center p-4">
+        {/* HEADER (same vibe as profile) */}
+        <Card className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)] text-center">
+          
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+            Friend Profile
+          </p>
 
           <img
             src={data.pet?.imageID}
@@ -39,16 +70,36 @@ export default function FriendProfilePage() {
             {data.user?.username}
           </h1>
 
-          <div className="mt-4 secondaryAction px-4 py-3 rounded-xl max-w-xs">
-            <p className="progressLabel">
+          <p className="mt-2 text-sm text-on-surface-variant">
+            Reading journey & pet companion
+          </p>
+
+        </Card>
+
+        {/* PET SECTION */}
+        <Card className="rounded-[2.5rem] bg-secondary-container p-6 flex flex-col items-center text-center">
+          
+          <div className="relative h-40 w-40">
+            <Image
+              src={data.pet?.imageID || "/gator....png"}
+              alt="Pet"
+              fill
+              className="object-contain image-pixel"
+            />
+          </div>
+
+          <div className="mt-4 rounded-[1.5rem] bg-surface-container p-4 max-w-sm">
+            <p className="text-sm text-on-surface-variant italic">
               {data.pet?.quote || "No quote yet"}
             </p>
           </div>
-        </div>
 
-        {/* BOOKS PREVIEW */}
-        <div>
-          <h2 className="streakCopy text-lg font-bold mb-2">
+        </Card>
+
+        {/* BOOKS */}
+        <Card className="rounded-[2.5rem] bg-surface-container-low p-6">
+          
+          <h2 className="font-display text-xl font-extrabold mb-4">
             Recently Read
           </h2>
 
@@ -71,6 +122,6 @@ export default function FriendProfilePage() {
         </div>
 
       </div>
-    </div>
+    </section>
   );
 }
