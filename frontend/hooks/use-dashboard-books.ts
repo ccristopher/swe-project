@@ -15,6 +15,7 @@ type ApiBook = {
 };
 
 type LeaderboardUser = {
+  clerkUserId?: string;
   booksCompleted?: number;
 };
 
@@ -137,11 +138,9 @@ function getRecentBooks(books: ApiBook[]): FinishedBook[] {
   }));
 }
 
-function toLeaderboardRank(currentBooksCompleted: number, leaderboard: LeaderboardUser[]) {
-  const higherCount = leaderboard.filter(
-    (entry) => Number(entry.booksCompleted || 0) > currentBooksCompleted,
-  ).length;
-  return higherCount + 1;
+function toLeaderboardRank(currentUserId: string, leaderboard: LeaderboardUser[]) {
+  const currentUserIndex = leaderboard.findIndex((entry) => entry.clerkUserId === currentUserId);
+  return currentUserIndex >= 0 ? currentUserIndex + 1 : null;
 }
 
 export function useDashboardBooks(): UseDashboardBooksResult {
@@ -236,7 +235,6 @@ export function useDashboardBooks(): UseDashboardBooksResult {
             ? rawRewards.filter((x: unknown) => typeof x === 'string')
             : [];
 
-          const currentBooksCompleted = Number(profileData?.user?.booksCompleted || 0);
           let nextRank: number | null = null;
 
           if (leaderboardResponse.ok) {
@@ -244,7 +242,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
             const leaderboard: LeaderboardUser[] = Array.isArray(leaderboardData?.leaderboard)
               ? leaderboardData.leaderboard
               : [];
-            nextRank = toLeaderboardRank(currentBooksCompleted, leaderboard);
+            nextRank = toLeaderboardRank(user.id, leaderboard);
           }
 
           if (isMounted) {
@@ -275,21 +273,6 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const allBooks = books ?? [];
   const totalBooks = allBooks.length;
   const completedBooks = allBooks.filter((book) => Boolean(book.completed)).length;
-  const totalPagesRead = allBooks.reduce((sum, book) => {
-    const pagesRead = Number(book.pagesRead);
-    const isComplete = Boolean(book.completed);
-    const numberOfPages = Number(book.numberOfPages);
-
-    if (Number.isFinite(pagesRead) && pagesRead >= 0) {
-      return sum + pagesRead;
-    }
-
-    if (isComplete && Number.isFinite(numberOfPages) && numberOfPages > 0) {
-      return sum + numberOfPages;
-    }
-
-    return sum;
-  }, 0);
   const totalPagesRead = sumPagesFromBooks(allBooks);
 
   return {
@@ -307,8 +290,6 @@ export function useDashboardBooks(): UseDashboardBooksResult {
     updateBookInDashboard,
   };
 }
-
-
 
 
 

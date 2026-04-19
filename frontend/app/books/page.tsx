@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { BookDetailsModal } from "@/components/books/book-details-modal";
-import type { FinishedBook } from "@/components/home/home-content.data";
 import Link from "next/link";
 import { BookDetailsModal } from "@/components/books/book-details-modal";
 import type { FinishedBook } from "@/components/home/home-content.data";
@@ -39,20 +37,28 @@ export default function BooksPage() {
   return (
     <section className="px-6 pb-16 pt-6 sm:px-8">
       <div className="mx-auto max-w-3xl space-y-6">
-
         {/* HEADER */}
-          <div className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
-            <div className="flex items-start justify-between gap-4">
-              
-              {/* LEFT */}
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
-                  Library
-                </p>
+        <div className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+          <div className="flex items-start justify-between gap-4">
+            {/* LEFT */}
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                Library
+              </p>
 
-                <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
-                  Your Books 📚
-                </h1>
+              <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
+                Your Books 📚
+              </h1>
+            </div>
+
+            {/* RIGHT (ADD BUTTON) */}
+            <Link href="/books/log">
+              <div className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105">
+                Add Book
+              </div>
+            </Link>
+          </div>
+        </div>
 
         {books.map((book) => (
           <div
@@ -63,6 +69,7 @@ export default function BooksPage() {
             {/* COVER */}
             <img
               src={book.coverUrl || "/defbookcover-min.jpg"}
+              alt={`${book.name} cover`}
               className="w-20 h-28 object-cover rounded-md"
             />
 
@@ -84,20 +91,12 @@ export default function BooksPage() {
                 <p className="mt-2 text-sm italic">
                   “{book.review}”
                 </p>
-              </div>
-
-              {/* RIGHT (ADD BUTTON) */}
-              <Link href="/books/log">
-                <div className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105">
-                  Add Book
-                </div>
-              </Link>
-
+              )}
             </div>
           </div>
         ))}
-
       </div>
+
       <BookDetailsModal
         book={selectedBook}
         onCloseAction={() => setSelectedBook(null)}
@@ -106,6 +105,6 @@ export default function BooksPage() {
           setBooks((prev) => prev.map((book) => (book._id === updatedBook._id ? updatedBook : book)));
         }}
       />
-    </div>
+    </section>
   );
 }

@@ -130,4 +130,3 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
 }
 
 
-
