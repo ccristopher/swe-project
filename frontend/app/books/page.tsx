@@ -5,6 +5,8 @@ import { useUser } from "@clerk/nextjs";
 import { BookDetailsModal } from "@/components/books/book-details-modal";
 import type { FinishedBook } from "@/components/home/home-content.data";
 import Link from "next/link";
+import { BookDetailsModal } from "@/components/books/book-details-modal";
+import type { FinishedBook } from "@/components/home/home-content.data";
 
 export default function BooksPage() {
   const { user } = useUser();
@@ -15,8 +17,8 @@ export default function BooksPage() {
     if (!user?.id) return;
 
     fetch(`/api/books`)
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         const mappedBooks: FinishedBook[] = (data.books || []).map((book: any) => ({
           _id: book._id,
           author: book.author,
@@ -52,8 +54,35 @@ export default function BooksPage() {
                   Your Books 📚
                 </h1>
 
-                <p className="mt-2 text-sm text-on-surface-variant">
-                  All your finished and in-progress reads in one place.
+        {books.map((book) => (
+          <div
+            key={book._id}
+            onClick={() => setSelectedBook(book)}
+            className="secondaryAction p-4 rounded-xl flex gap-4 cursor-pointer hover:-translate-y-1 transition"
+          >
+            {/* COVER */}
+            <img
+              src={book.coverUrl || "/defbookcover-min.jpg"}
+              className="w-20 h-28 object-cover rounded-md"
+            />
+
+            {/* INFO */}
+            <div className="flex-1">
+              <h2 className="font-bold">{book.name}</h2>
+              <p className="text-sm progressLabel">{book.author}</p>
+
+              <p className="text-xs mt-2">
+                📄 {book.numberOfPages} pages
+              </p>
+
+              <p className="text-xs">
+                ✅ {book.completed ? "Completed" : "In Progress"}
+              </p>
+
+              {/* FUTURE REVIEW */}
+              {book.review && (
+                <p className="mt-2 text-sm italic">
+                  “{book.review}”
                 </p>
               </div>
 
@@ -66,63 +95,17 @@ export default function BooksPage() {
 
             </div>
           </div>
-
-        {/* BOOK LIST */}
-        <div className="space-y-4">
-          {books.map((book) => (
-            <div
-              key={book._id}
-              onClick={() => setSelectedBook(book)}
-              className="flex cursor-pointer gap-4 rounded-[1.75rem] bg-surface-container p-4 transition hover:-translate-y-1 hover:shadow-md"
-            >
-              <img
-                src={book.coverUrl || "/defbookcover-min.jpg"}
-                className="h-28 w-20 rounded-[1.25rem] object-cover shadow-sm"
-              />
-
-              <div className="flex flex-1 flex-col justify-between">
-                <div>
-                  <h2 className="font-bold text-on-surface">
-                    {book.name}
-                  </h2>
-
-                  <p className="text-sm text-on-surface-variant">
-                    {book.author}
-                  </p>
-                </div>
-
-                <div className="mt-2 space-y-1 text-xs text-on-surface-variant">
-                  <p>📄 {book.numberOfPages} pages</p>
-                  <p>
-                    {book.completed ? "✅ Completed" : "📖 In Progress"}
-                  </p>
-                </div>
-
-                {book.review && (
-                  <p className="mt-2 line-clamp-2 text-sm italic text-on-surface">
-                    “{book.review}”
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        ))}
 
       </div>
-
-      {/* MODAL */}
       <BookDetailsModal
         book={selectedBook}
         onCloseAction={() => setSelectedBook(null)}
         onBookUpdatedAction={(updatedBook) => {
           setSelectedBook(updatedBook);
-          setBooks((prev) =>
-            prev.map((book) =>
-              book._id === updatedBook._id ? updatedBook : book
-            )
-          );
+          setBooks((prev) => prev.map((book) => (book._id === updatedBook._id ? updatedBook : book)));
         }}
       />
-    </section>
+    </div>
   );
 }

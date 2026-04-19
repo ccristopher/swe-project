@@ -59,23 +59,27 @@ export default function LeaderboardPage() {
 
         {/* LEADERBOARD */}
         <div className="space-y-3">
-          {leaderboard.map((u, index) => {
-            const isTop = index === 0;
+          {leaderboard.map((u, index) => (
+            <div
+              key={u._id}
+              className="secondaryAction p-4 rounded-xl flex items-center justify-between"
+            >
+              {/* LEFT SIDE */}
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-lg">
+                  #{index + 1}
+                </span>
 
-            return (
-              <div
-                key={u._id}
-                className={`flex items-center justify-between rounded-[1.75rem] p-4 transition hover:scale-[1.01] ${
-                  isTop
-                    ? "bg-secondary-container shadow-md"
-                    : "bg-surface-container"
-                }`}
-              >
-                {/* LEFT */}
-                <div className="flex items-center gap-4">
-                  <span className="w-8 text-lg font-extrabold text-on-surface">
-                    #{index + 1}
-                  </span>
+                {/* optional pet */}
+                <img
+                  src={u.petImage || "/gator....png"}
+                  className="w-10 h-10"
+                />
+
+                <span className="font-semibold">
+                  {u.username}
+                </span>
+              </div>
 
                   <img
                     src={u.petImage || "/gator....png"}

@@ -57,8 +57,17 @@ export default function FriendProfilePage() {
             Friend Profile
           </p>
 
-          <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-foreground">
-            {data.user?.username || "Unknown User"}
+          <img
+            src={data.pet?.imageID}
+            className="w-32 h-32 z-10"
+          />
+
+          <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
+            Lv {data.level?.level ?? 1}
+          </div>
+
+          <h1 className="text-xl font-bold statValue mt-2">
+            {data.user?.username}
           </h1>
 
           <p className="mt-2 text-sm text-on-surface-variant">
@@ -94,32 +103,23 @@ export default function FriendProfilePage() {
             Recently Read
           </h2>
 
-          {booksPreview?.length ? (
-            <div className="grid grid-cols-3 gap-3">
-              {booksPreview.map((book: any) => (
-                <div key={book._id} className="space-y-2">
-
-                  <div className="aspect-[2/3] overflow-hidden rounded-xl bg-surface-container">
-                    <img
-                      src={book.coverUrl || "/defbookcover-min.jpg"}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-
-                  <p className="text-[10px] text-center text-on-surface-variant truncate">
-                    {book.name}
-                  </p>
-
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-on-surface-variant">
-              No books yet
-            </p>
-          )}
-
-        </Card>
+          <div className="grid grid-cols-3 gap-3">
+            {booksPreview?.map((book: any) => (
+              <div
+                key={book._id}
+                className="secondaryAction rounded-lg overflow-hidden p-2"
+              >
+                <img
+                  src={book.coverUrl || "/defbookcover-min.jpg"}
+                  className="w-full h-28 object-cover rounded-md"
+                />
+                <p className="text-xs mt-1 truncate">
+                  {book.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
 
       </div>
     </section>

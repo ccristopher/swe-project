@@ -21,7 +21,12 @@ const userSchema = {
           description: "list of friend user IDs"
         }, 
         totalPagesRead: { bsonType: "int" },
-        booksCompleted: { bsonType: "int" }
+        booksCompleted: { bsonType: "int" },
+        unlockedRewards: {
+          bsonType: "array",
+          items: { bsonType: "string" },
+          description: "reward ids earned by reaching pet levels (e.g. lvl-2)"
+        }
       }
     }
   }

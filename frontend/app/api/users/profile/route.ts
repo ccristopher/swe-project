@@ -1,6 +1,12 @@
-import { NextResponse } from "next/server";
 import connectDB from "../../../../../backend/db/mongo";
 import { ObjectId } from "mongodb";
+import { getLevelFromTotalPages, totalsFromBooks } from "@/lib/readingProgress";
+
+function toPublicPath(value: unknown, fallback: string) {
+  if (typeof value !== "string" || !value.trim()) return fallback;
+  if (/^https?:\/\//i.test(value)) return value;
+  return value.startsWith("/") ? value : `/${value}`;
+}
 
 function toPublicPath(value: unknown, fallback: string) {
   if (typeof value !== "string" || !value.trim()) return fallback;
@@ -46,5 +52,38 @@ export async function GET(req: Request) {
     coverUrl: toPublicPath(book.coverUrl, "/defbookcover-min.jpg"),
   }));
 
-  return Response.json({ user, pet: normalizedPet, books: normalizedBooks });
+  const { totalPagesRead, booksCompleted } = totalsFromBooks(normalizedBooks);
+  const level = getLevelFromTotalPages(totalPagesRead);
+
+  const rawFriends = user.friends || [];
+  let rank = 1;
+  if (rawFriends.length > 0) {
+    const friendObjectIds = rawFriends.map((id: unknown) => {
+      if (typeof id === "string" && ObjectId.isValid(id)) return new ObjectId(id);
+      return id;
+    });
+    const peers = await db
+      .collection("users")
+      .find({ _id: { $in: friendObjectIds } })
+      .toArray();
+    const higher = peers.filter(
+      (p: { booksCompleted?: number }) =>
+        Number(p.booksCompleted || 0) > booksCompleted
+    ).length;
+    rank = higher + 1;
+  }
+
+  const userOut = {
+    ...user,
+    totalPagesRead,
+    booksCompleted,
+    rank,
+  };
+
+  return Response.json({
+    user: userOut,
+    pet: normalizedPet,
+    books: normalizedBooks,
+    level,
+  });
 }
