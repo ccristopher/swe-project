@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function LeaderboardPage() {
   const { user } = useUser();
@@ -46,12 +47,12 @@ export default function LeaderboardPage() {
         </div>
 
         {/* RIGHT (ADD FRIEND) */}
-        <button
-          onClick={() => alert("Add friend flow here")}
+        <Link
+          href="/friends"
           className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105"
         >
-          + Add Friend
-        </button>
+          Add Friend
+        </Link>
 
       </div>
     </div>

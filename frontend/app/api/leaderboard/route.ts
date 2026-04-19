@@ -25,8 +25,13 @@ export async function GET() {
     typeof id === "string" ? new ObjectId(id) : id
   );
 
+  const allIds = [
+    currentUser._id,
+    ...friendObjectIds,
+  ];
+
   const leaderboard = await users
-    .find({ _id: { $in: friendObjectIds } })
+    .find({ _id: { $in: allIds } })
     .sort({ booksCompleted: -1 })
     .toArray();
 

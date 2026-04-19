@@ -60,7 +60,7 @@ export default function BooksPage() {
               {/* RIGHT (ADD BUTTON) */}
               <Link href="/books/log">
                 <div className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105">
-                  + Add
+                  Add Book
                 </div>
               </Link>
 

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
 
 export default function FriendsPage() {
   const { user } = useUser();
@@ -12,48 +11,111 @@ export default function FriendsPage() {
   useEffect(() => {
     if (!user?.id) return;
 
-    fetch(`/api/friends?userId=${user.id}`)
-      .then(res => res.json())
-      .then(data => setFriends(data.friends || []));
+    fetch("/api/friends")
+      .then((res) => res.json())
+      .then((data) => setFriends(data.friends || []));
   }, [user]);
 
   return (
-    <div className="flex justify-center p-6">
-      <div className="w-full max-w-2xl space-y-4">
+    <section className="px-6 pb-16 pt-6 sm:px-8">
+      <div className="mx-auto max-w-3xl space-y-6">
 
-        <h1 className="text-2xl font-bold statValue">
-          Friends
-        </h1>
+        {/* HEADER (same vibe as leaderboard) */}
+        <div className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+          <div className="flex items-start justify-between gap-4">
 
-        <Link href="/profile">
-            <Button className="secondaryAction">
-                ← Back
-            </Button>
-        </Link>
-
-        {friends.map((friend) => (
-          <Link
-            key={friend._id}
-            href={`/friends/${friend._id}`}
-            className="secondaryAction p-4 rounded-xl flex items-center justify-between"
-          >
+            {/* LEFT */}
             <div>
-              <p className="font-bold">
-                {friend.username || "No username"}
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                Social
               </p>
-              <p className="text-xs progressLabel">
-                View profile →
+
+              <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
+                Friends 👥
+              </h1>
+
+              <p className="mt-2 text-sm text-on-surface-variant">
+                People you’re connected with
               </p>
             </div>
 
-            <img
-              src={friend.pet?.imageID || "/gator....png"}
-              className="w-12 h-12 rounded-full"
-            />
-          </Link>
-        ))}
+            {/* RIGHT */}
+            <Link
+              href="/friends/add"
+              className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105"
+            >
+              Add Friend
+            </Link>
+
+          </div>
+        </div>
+
+        {/* LIST */}
+        <div className="space-y-3">
+
+          {friends.length === 0 ? (
+            <div className="rounded-[1.75rem] bg-surface-container p-5 text-sm text-on-surface-variant">
+              No friends yet. Add someone to get started 👀
+            </div>
+          ) : (
+            friends.map((friend, index) => {
+              const isTop = index === 0;
+
+              return (
+                <Link
+                  key={friend._id}
+                  href={`/friends/${friend._id}`}
+                >
+                  <div
+                    className={`flex items-center justify-between rounded-[1.75rem] p-4 transition hover:scale-[1.01] ${
+                      isTop
+                        ? "bg-secondary-container shadow-md"
+                        : "bg-surface-container"
+                    }`}
+                  >
+
+                    {/* LEFT SIDE */}
+                    <div className="flex items-center gap-4">
+
+                      <span className="w-8 text-lg font-extrabold text-on-surface">
+                        #{index + 1}
+                      </span>
+
+                      <img
+                        src={friend.pet?.imageID || "/gator....png"}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+
+                      <div>
+                        <p className="font-semibold text-on-surface">
+                          {friend.username || "No username"}
+                        </p>
+
+                        <p className="text-xs text-on-surface-variant">
+                          View profile →
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* RIGHT SIDE */}
+                    <div className="text-right">
+                      <p className="text-lg font-extrabold text-primary">
+                        {friend.booksCompleted || 0}
+                      </p>
+                      <p className="text-xs text-on-surface-variant">
+                        books
+                      </p>
+                    </div>
+
+                  </div>
+                </Link>
+              );
+            })
+          )}
+
+        </div>
 
       </div>
-    </div>
+    </section>
   );
 }
