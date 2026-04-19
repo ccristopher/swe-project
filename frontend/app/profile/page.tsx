@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FinishedBookCard } from "@/components/home/finished-book-card"; // adjust path if needed
 
 export default function ProfilePage() {
   const { user } = useUser();
@@ -15,7 +14,6 @@ export default function ProfilePage() {
   const [quote, setQuote] = useState("");
   const [selectedBook, setSelectedBook] = useState<any>(null);
 
-  // username editing
   const [editingName, setEditingName] = useState(false);
   const [username, setUsername] = useState("");
 
@@ -26,29 +24,12 @@ export default function ProfilePage() {
       .then((res) => res.json())
       .then((res) => {
         setData(res);
+
         setQuote(res.pet?.quote || "");
+
         setUsername(res.user?.username || "");
       });
   }, [user]);
-
-  async function updateQuote() {
-    const newQuote = prompt("Write a quote from your book:");
-    if (!newQuote) return;
-
-    const res = await fetch("/api/users/quote", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quote: newQuote }),
-    });
-
-    if (!res.ok) {
-      alert("Could not save quote");
-      return;
-    }
-
-    const saved = await res.json();
-    setQuote(typeof saved.quote === "string" ? saved.quote : newQuote);
-  }
 
   async function saveUsername() {
     const res = await fetch("/api/users/username", {
@@ -114,11 +95,11 @@ export default function ProfilePage() {
 
           <div className="mt-6 grid gap-6 md:grid-cols-[1fr_0.9fr] md:items-center">
 
-            {/* PET (pixel-perfect) */}
+            {/* PET */}
             <Card className="relative min-h-72 rounded-[2rem] border-0 bg-secondary-container flex items-center justify-center">
               <div className="absolute bottom-6 w-24 h-4 bg-black/20 blur-md rounded-full" />
               <Image
-                src={data.pet?.imageID || "/gator....png"}
+                src={data.pet?.imageID || "../../../gator....png"}
                 alt="Pet"
                 width={192}
                 height={192}
@@ -128,20 +109,35 @@ export default function ProfilePage() {
 
             {/* QUOTE + CTA */}
             <div className="space-y-4">
-              <Card
-                onClick={updateQuote}
-                className="cursor-pointer rounded-[1.75rem] border-0 bg-surface-container-highest p-5 transition hover:shadow-md"
-              >
-                <p className="text-sm text-on-surface-variant">
-                  {quote || "💬 Share a quote from your reading"}
+
+              {/* Quote Display */}
+              <Card className="rounded-[1.75rem] border-0 bg-surface-container-highest p-5">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                  Quote
+                </p>
+
+                <p className="mt-2 text-sm italic text-on-surface-variant leading-relaxed">
+                  {quote || "💬 Share a meaningful quote from your reading"}
                 </p>
               </Card>
 
-              <Link href="/books">
-                <Button className="h-12 w-full rounded-full font-display text-base font-bold">
-                  View All Books
-                </Button>
-              </Link>
+              {/* Buttons */}
+              <div className="flex gap-3">
+
+                <Link href="/quote" className="flex-1">
+                  <Button className="h-12 w-full rounded-full font-display text-base font-bold">
+                    {quote ? "Edit Quote" : "Add Quote"}
+                  </Button>
+                </Link>
+
+                <Link href="/books">
+                  <Button className="h-12 rounded-full bg-surface-container px-5 text-sm font-semibold text-foreground">
+                    Books
+                  </Button>
+                </Link>
+
+              </div>
+
             </div>
           </div>
         </Card>
@@ -154,10 +150,7 @@ export default function ProfilePage() {
                 Books Read
               </h2>
 
-              <Link
-                href="/books"
-                className="text-sm font-semibold text-primary hover:opacity-80"
-              >
+              <Link href="/books" className="text-sm font-semibold text-primary hover:opacity-80">
                 View all
               </Link>
             </div>
@@ -170,7 +163,6 @@ export default function ProfilePage() {
                     onClick={() => setSelectedBook(book)}
                     className="cursor-pointer transition-transform hover:-translate-y-1"
                   >
-                    {/* Book Cover */}
                     <div className="aspect-[2/3] w-full overflow-hidden rounded-[1.25rem] bg-surface-container shadow-sm">
                       <img
                         src={book.coverUrl || "/defbookcover-min.jpg"}
@@ -179,7 +171,6 @@ export default function ProfilePage() {
                       />
                     </div>
 
-                    {/* Optional title (makes grid feel less empty) */}
                     <p className="mt-1 truncate text-center text-[10px] text-on-surface-variant">
                       {book.name}
                     </p>
@@ -194,107 +185,6 @@ export default function ProfilePage() {
           </Card>
         </section>
       </div>
-
-      {/* MODAL */}
-      {selectedBook && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-          onClick={() => setSelectedBook(null)}
-        >
-          <div
-            className="relative w-[90%] max-w-md rounded-[2rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedBook(null)}
-              className="absolute right-4 top-4"
-            >
-              ✖
-            </button>
-
-            <Image
-              src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
-              alt="Book cover"
-              width={300}
-              height={200}
-              className="h-48 w-full rounded-xl object-cover"
-            />
-
-            <h2 className="mt-4 font-display text-xl font-extrabold">
-              {selectedBook.name}
-            </h2>
-
-            <p className="text-sm text-on-surface-variant">
-              {selectedBook.author}
-            </p>
-
-            <div className="mt-4">
-              <p className="text-xs mb-1">
-                {selectedBook.pagesRead || 0} / {selectedBook.numberOfPages} pages
-              </p>
-
-              <div className="h-3 overflow-hidden rounded-full bg-surface-container">
-                <div
-                  className="h-full bg-primary"
-                  style={{
-                    width: `${
-                      selectedBook.numberOfPages
-                        ? ((selectedBook.pagesRead || 0) /
-                            selectedBook.numberOfPages) *
-                          100
-                        : 0
-                    }%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <p className="mt-2 text-xs">
-              {selectedBook.completed ? "✅ Completed" : "📖 In Progress"}
-            </p>
-
-            <div className="mt-4">
-              <p className="text-sm font-bold">Your thoughts</p>
-              <p className="text-sm italic">
-                {selectedBook.review || "No review yet..."}
-              </p>
-            </div>
-
-            <button
-              onClick={async () => {
-                const review = prompt("Update your thoughts:");
-                if (!review) return;
-
-                await fetch(`/api/books/${selectedBook._id}`, {
-                  method: "PATCH",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ review }),
-                });
-
-                setSelectedBook({ ...selectedBook, review });
-
-                setData((prev: any) => ({
-                  ...prev,
-                  books: prev.books.map((b: any) =>
-                    b._id === selectedBook._id ? { ...b, review } : b
-                  ),
-                }));
-              }}
-              className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white"
-            >
-              Edit Review
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* pixel rendering fix */}
-      <style jsx global>{`
-        .image-pixel {
-          image-rendering: pixelated;
-          image-rendering: crisp-edges;
-        }
-      `}</style>
     </section>
   );
 }
