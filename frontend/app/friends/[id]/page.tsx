@@ -72,7 +72,7 @@ export default function FriendProfilePage() {
           
           <div className="relative h-40 w-40">
             <Image
-              src={data.pet?.imageID || "../../../../../gator....png"}
+              src={data.pet?.imageID || "/gator....png"}
               alt="Pet"
               fill
               className="object-contain image-pixel"

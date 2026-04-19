@@ -64,6 +64,15 @@ export async function POST(req: Request) {
       }
     );
 
+    await users.updateOne(
+      { _id: friend._id },
+      {
+        $addToSet: {
+          friends: currentUser._id,
+        },
+      }
+    );
+
     return Response.json({ message: "Friend added!" });
   } catch (err: any) {
     return Response.json({ error: err.message }, { status: 500 });

@@ -99,7 +99,7 @@ export default function ProfilePage() {
             <Card className="relative min-h-72 rounded-[2rem] border-0 bg-secondary-container flex items-center justify-center">
               <div className="absolute bottom-6 w-24 h-4 bg-black/20 blur-md rounded-full" />
               <Image
-                src={data.pet?.imageID || "../../../gator....png"}
+                src={data.pet?.imageID || "/gator....png"}
                 alt="Pet"
                 width={192}
                 height={192}
