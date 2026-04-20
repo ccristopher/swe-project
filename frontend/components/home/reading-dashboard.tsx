@@ -6,8 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useDashboardBooks } from '@/hooks/use-dashboard-books';
 import { getLevelFromTotalPages, READING_PAGES_PER_LEVEL } from '@/lib/readingProgress';
-import { labelForRewardId, rewardLabelForLevel } from '@/lib/levelRewards';
-import type { EquippedItems } from '@/lib/petItems';
+import { rewardLabelForLevel } from '@/lib/levelRewards';
+import { getPetItem, petItemSlots, type EquippedItems } from '@/lib/petItems';
 import { BookDetailsModal } from '@/components/books/book-details-modal';
 import { PetAvatar } from '@/components/pet-avatar';
 import { Badge } from '@/components/ui/badge';
@@ -151,8 +151,8 @@ export function ReadingDashboard() {
               totalPagesRead={totalPagesRead}
             />
             <NextUnlockPanel
+              petEquippedItems={petEquippedItems}
               totalPagesRead={totalPagesRead}
-              unlockedRewards={unlockedRewards}
             />
           </aside>
         </div>
@@ -408,11 +408,11 @@ function PetSummaryPanel({
 }
 
 function NextUnlockPanel({
+  petEquippedItems,
   totalPagesRead,
-  unlockedRewards,
 }: {
+  petEquippedItems: EquippedItems;
   totalPagesRead: number;
-  unlockedRewards: string[];
 }) {
   const { level, pagesToNextLevel, levelProgressPercent } = getLevelFromTotalPages(
     totalPagesRead,
@@ -420,13 +420,6 @@ function NextUnlockPanel({
   );
   const nextLevel = level + 1;
   const nextRewardName = rewardLabelForLevel(nextLevel);
-
-  const sortedIds = [...unlockedRewards].sort((a, b) => {
-    const na = Number(/^lvl-(\d+)$/.exec(a)?.[1] ?? 0);
-    const nb = Number(/^lvl-(\d+)$/.exec(b)?.[1] ?? 0);
-    return na - nb;
-  });
-  const showcase = sortedIds.slice(-3).reverse();
 
   return (
     <Card className={`${panelCardClassName} p-5`}>
@@ -455,30 +448,32 @@ function NextUnlockPanel({
 
       <div className="pt-4">
         <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
-          Earned rewards
+          Currently wearing
         </h3>
         <p className="mt-1 text-sm text-on-surface-variant">
-          One unlock each time you reach a new level (150 pages per level).
+          Accessories your pet has equipped.
         </p>
         <div className="mt-3 grid grid-cols-3 gap-3">
-          {[0, 1, 2].map((i) => {
-            const id = showcase[i];
+          {petItemSlots.map((slot) => {
+            const item = getPetItem(petEquippedItems[slot]);
             return (
               <Card
-                key={i}
+                key={slot}
                 className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-3xl border-0 p-2 text-center shadow-none ${styles.wardrobeSlot}`}
               >
-                {id ? (
+                {item ? (
                   <>
-                    <span className="text-2xl" aria-hidden>
-                      🎁
-                    </span>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="image-pixel h-10 w-10 object-contain"
+                    />
                     <span className="text-xs font-semibold leading-tight text-foreground">
-                      {labelForRewardId(id)}
+                      {item.name}
                     </span>
                   </>
                 ) : (
-                  <span className="text-xs text-on-surface-variant">Empty</span>
+                  <span className="text-xs text-on-surface-variant">None</span>
                 )}
               </Card>
             );
