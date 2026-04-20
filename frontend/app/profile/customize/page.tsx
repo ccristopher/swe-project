@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { ArrowLeft, Check, Lock } from "lucide-react";
 import Link from "next/link";
 import { PetAvatar } from "@/components/pet-avatar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   cleanEquippedItems,
@@ -56,28 +58,34 @@ export default function CustomizePetPage() {
     : [];
 
   return (
-    <section className="px-6 pb-16 pt-4 sm:px-8">
+    <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
       <div className="mx-auto max-w-7xl space-y-5">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
-              Pet Closet
-            </p>
-            <h1 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
-              Customize Pet
-            </h1>
-          </div>
+        <Card className="dashboardPanel gap-0 p-6 sm:p-7">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                Pet Closet
+              </p>
+              <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
+                Customize pet
+              </h1>
+            </div>
 
-          <Link
-            href="/profile"
-            className="rounded-full bg-surface-container px-4 py-2 text-sm font-bold text-foreground"
-          >
-            Back
-          </Link>
-        </div>
+            <Button
+              asChild
+              className="secondaryAction h-10 shrink-0 rounded-full px-4 text-sm font-bold"
+              variant="outline"
+            >
+              <Link href="/profile">
+                <ArrowLeft className="size-4" />
+                Back
+              </Link>
+            </Button>
+          </div>
+        </Card>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <Card className="rounded-[2.25rem] border-0 bg-surface-container-low p-5 shadow-[0_14px_30px_var(--card-shadow)]">
+          <Card className="dashboardPanel gap-0 p-5 sm:p-6">
             <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
               Accessories
             </h2>
@@ -90,14 +98,19 @@ export default function CustomizePetPage() {
                     key={item.id}
                     disabled={!unlocked}
                     onClick={() => save({ ...equipped, [item.slot]: equippedNow ? null : item.id })}
-                    className={`rounded-[1.5rem] bg-surface-container p-3 text-left shadow-sm transition ${
-                      equippedNow ? "ring-3 ring-primary" : "hover:scale-[1.02]"
+                    className={`dashboardInnerPanel relative cursor-pointer p-3 text-left transition-shadow ${
+                      equippedNow ? "ring-3 ring-primary" : "hover:shadow-[0_14px_28px_var(--card-shadow)]"
                     } disabled:cursor-not-allowed disabled:opacity-50`}
                     type="button"
                   >
-                    <div className="flex aspect-square items-center justify-center rounded-[1.25rem] bg-secondary-container">
+                    <div className="petStageGrid flex aspect-square items-center justify-center rounded-[1.25rem]">
                       <img src={item.image} alt={item.name} className="image-pixel h-20 w-20 object-contain" />
                     </div>
+                    {(!unlocked || equippedNow) && (
+                      <span className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant">
+                        {!unlocked ? <Lock className="size-3.5" /> : <Check className="size-4 text-primary" />}
+                      </span>
+                    )}
                     <p className="mt-2 truncate text-sm font-bold text-foreground">{item.name}</p>
                     <p className="text-xs text-on-surface-variant">
                       {!unlocked ? `Level ${item.unlockLevel}` : equippedNow ? "Equipped" : slotNames[item.slot]}
@@ -108,8 +121,8 @@ export default function CustomizePetPage() {
             </div>
           </Card>
 
-          <Card className="rounded-[2.25rem] border-0 bg-surface-container-low p-5 shadow-[0_14px_30px_var(--card-shadow)]">
-            <div className="flex h-80 items-center justify-center rounded-[2rem] bg-secondary-container">
+          <Card className="dashboardPanel gap-0 p-5">
+            <div className="petStageGrid flex h-80 items-center justify-center rounded-[2.25rem]">
               <PetAvatar
                 imageSrc={data.pet?.imageID || "/gator....png"}
                 equippedItems={equipped}
@@ -126,7 +139,8 @@ export default function CustomizePetPage() {
                   <button
                     key={slot}
                     onClick={() => item && save({ ...equipped, [slot]: null })}
-                    className="flex h-24 flex-col items-center justify-center rounded-[1.25rem] bg-surface-container p-2 text-xs font-bold text-on-surface-variant transition hover:scale-[1.02]"
+                    disabled={!item}
+                    className="dashboardInnerPanel flex h-24 cursor-pointer flex-col items-center justify-center p-2 text-xs font-bold text-on-surface-variant transition-shadow hover:shadow-[0_12px_22px_var(--card-shadow)] disabled:cursor-default disabled:opacity-70 disabled:hover:shadow-[0_10px_20px_var(--card-shadow)]"
                     type="button"
                   >
                     <span>{slotNames[slot]}</span>

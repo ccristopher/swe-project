@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -45,43 +46,53 @@ export default function AddFriendPage() {
   }
 
   return (
-    <section className="px-6 pb-16 pt-6 sm:px-8">
+    <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
       <div className="mx-auto max-w-xl space-y-6">
 
-        <Card className="rounded-[2.5rem] bg-surface-container-low p-6">
-          <h1 className="text-2xl font-bold">Add Friend 👥</h1>
-          <p className="text-sm text-on-surface-variant mt-2">
-            Enter a username
+        <Card className="dashboardPanel gap-0 p-6 sm:p-7">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+            Social
+          </p>
+          <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
+            Add friend
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+            Enter a username to add someone to your reading circle.
           </p>
         </Card>
 
-        <Card className="rounded-[2rem] bg-surface-container p-5 space-y-3">
+        <Card className="dashboardPanel gap-0 space-y-3 p-5 sm:p-6">
           <input
             value={friendUsername}
             onChange={(e) => setFriendUsername(e.target.value)}
             placeholder="Username"
-            className="w-full bg-transparent outline-none border-b border-border pb-2"
+            className="dashboardInput w-full px-4 py-3 text-sm"
           />
 
           {message && (
-            <p className="text-xs text-on-surface-variant">{message}</p>
+            <p className="text-sm font-semibold text-on-surface-variant">{message}</p>
           )}
         </Card>
 
         <div className="flex gap-3">
-          <Link
-            href="/friends"
-            className="flex-1 rounded-full bg-surface-container px-4 py-3 text-center text-sm font-semibold"
+          <Button
+            asChild
+            className="secondaryAction h-12 flex-1 rounded-full font-display text-sm font-bold"
+            variant="outline"
           >
-            Cancel
-          </Link>
+            <Link href="/friends">
+              <ArrowLeft className="size-4" />
+              Cancel
+            </Link>
+          </Button>
 
           <Button
             onClick={handleAddFriend}
             disabled={loading || !friendUsername.trim()}
-            className="flex-1 rounded-full font-bold"
+            className="primaryAction h-12 flex-1 rounded-full font-display text-sm font-bold"
           >
-            {loading ? "Adding..." : "Add Friend"}
+            <UserPlus className="size-4" />
+            {loading ? "Adding..." : "Add friend"}
           </Button>
         </div>
 

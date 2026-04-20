@@ -159,8 +159,20 @@
     @apply outline-none;
   }
 
+  a[href] {
+    cursor: pointer;
+  }
+
   button {
     @apply outline-none;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 
   ::selection {
@@ -173,5 +185,93 @@
     -ms-interpolation-mode: nearest-neighbor;
     image-rendering: crisp-edges;
     image-rendering: pixelated;
+  }
+
+  .primaryAction {
+    background-image: linear-gradient(135deg, #ffe08a, var(--accent));
+    box-shadow: 0 5px 0 0 #d4a73e;
+    color: var(--accent-foreground);
+    transition: opacity 150ms ease, box-shadow 150ms ease;
+  }
+
+  .secondaryAction {
+    background: var(--surface-container-low);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 24px var(--card-shadow);
+    color: var(--foreground);
+  }
+
+  .dashboardPanel {
+    background: var(--surface-container-low);
+    border: 0;
+    border-radius: 2.125rem;
+    box-shadow: 0 14px 30px var(--card-shadow);
+  }
+
+  .dashboardInnerPanel {
+    background: var(--surface-container);
+    border: 1px solid var(--border);
+    border-radius: 1.9rem;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.24),
+      0 10px 20px var(--card-shadow);
+  }
+
+  .bookCoverFrame {
+    background: var(--background);
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 12px 24px var(--card-shadow);
+  }
+
+  .petStageGrid {
+    background-color: var(--secondary-container);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.18) 0 2px,
+        transparent 2px 24px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.18) 0 2px,
+        transparent 2px 24px
+      );
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  .starBadge {
+    background: var(--accent);
+    color: var(--accent-foreground);
+    font-family: var(--font-display-family), var(--font-body), "Segoe UI", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .progressLabel {
+    color: var(--on-surface-variant);
+  }
+
+  .statValue {
+    color: var(--foreground);
+    font-family: var(--font-display-family), var(--font-body), "Segoe UI", sans-serif;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .dashboardInput {
+    background: var(--surface-container);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    color: var(--foreground);
+    outline: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  }
+
+  .dashboardInput:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
   }
 }

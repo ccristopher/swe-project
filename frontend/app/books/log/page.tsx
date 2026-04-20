@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, BookPlus } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { labelForRewardId } from "@/lib/levelRewards";
 
 export default function LogBookPage() {
@@ -48,45 +51,68 @@ export default function LogBookPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-3xl bg-surface-container-low p-6 shadow-xl">
+    <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
+      <div className="mx-auto max-w-xl space-y-5">
+        <Card className="dashboardPanel gap-0 p-6 sm:p-7">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                Library
+              </p>
+              <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
+                Log a book
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+                Add a finished read and keep your dashboard totals current.
+              </p>
+            </div>
 
-        <h1 className="text-3xl font-bold mb-6 text-center">
-          Log a Book 🐊
-        </h1>
+            <Button
+              asChild
+              className="secondaryAction h-10 shrink-0 rounded-full px-4 text-sm font-bold"
+              variant="outline"
+            >
+              <Link href="/books">
+                <ArrowLeft className="size-4" />
+                Back
+              </Link>
+            </Button>
+          </div>
+        </Card>
 
-        <div className="space-y-4">
-
+        <Card className="dashboardPanel gap-0 p-5 sm:p-6">
+          <div className="space-y-4">
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="dashboardInput w-full px-4 py-3 text-sm"
             placeholder="Book Title"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="dashboardInput w-full px-4 py-3 text-sm"
             placeholder="Author"
             value={form.author}
             onChange={(e) => setForm({ ...form, author: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="dashboardInput w-full px-4 py-3 text-sm"
             placeholder="Genre"
             value={form.genre}
             onChange={(e) => setForm({ ...form, genre: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="dashboardInput w-full px-4 py-3 text-sm"
             placeholder="ISBN (optional)"
             value={form.isbn}
             onChange={(e) => setForm({ ...form, isbn: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="dashboardInput w-full px-4 py-3 text-sm"
+            inputMode="numeric"
             placeholder="Page Count"
             value={form.pageCount}
             onChange={(e) => setForm({ ...form, pageCount: e.target.value })}
@@ -95,13 +121,14 @@ export default function LogBookPage() {
           <Button
             onClick={submitBook}
             disabled={loading}
-            className={`w-full h-14 text-lg font-bold rounded-full primaryAction`}
+            className="primaryAction h-14 w-full rounded-full font-display text-lg font-bold"
           >
-            {loading ? "Logging..." : "Add Book"}
+            <BookPlus className="size-5" />
+            {loading ? "Logging..." : "Add book"}
           </Button>
-
-        </div>
+          </div>
+        </Card>
       </div>
-    </div>
+    </section>
   );
 }

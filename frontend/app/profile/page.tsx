@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { Pencil, Quote, X } from "lucide-react";
 import Link from "next/link";
 import { PetAvatar } from "@/components/pet-avatar";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { cleanEquippedItems } from "@/lib/petItems";
 
 export default function ProfilePage() {
@@ -97,8 +97,8 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-5xl space-y-6">
 
         {/* HERO / PET */}
-        <Card className="relative overflow-hidden rounded-[2.5rem] border-0 bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
-          <div className="flex items-start justify-between">
+        <Card className="dashboardPanel relative overflow-hidden gap-0 p-6 sm:p-7">
+          <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
                 Profile
@@ -109,12 +109,12 @@ export default function ProfilePage() {
                   <input
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="bg-transparent border-b border-border outline-none font-display text-3xl font-extrabold"
+                    className="dashboardInput max-w-[14rem] px-3 py-2 font-display text-3xl font-extrabold sm:max-w-sm"
                   />
                   <button
                     onClick={saveUsername}
                     type="button"
-                    className="text-sm font-bold text-primary"
+                    className="cursor-pointer rounded-full bg-primary-container px-3 py-2 text-sm font-bold text-on-primary-fixed-variant"
                   >
                     Save
                   </button>
@@ -129,7 +129,6 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* Leaderboard badge (among friends) */}
             <div className="starBadge px-3 py-1 rounded-full text-sm">
               #{data.user?.rank ?? "-"}
             </div>
@@ -140,12 +139,13 @@ export default function ProfilePage() {
             {/* PET */}
             <Link
               href="/profile/customize"
-              className="relative flex min-h-72 items-center justify-center rounded-[2rem] bg-secondary-container transition hover:scale-[1.01]"
+              className="petStageGrid relative flex min-h-72 cursor-pointer items-center justify-center rounded-[2.25rem] transition-shadow hover:shadow-[0_14px_30px_var(--card-shadow)]"
             >
               <div className="absolute top-3 left-3 starBadge px-3 py-1 rounded-full text-sm">
                 Lv {data.level?.level ?? 1}
               </div>
-              <div className="absolute right-3 top-3 rounded-full bg-surface-container px-3 py-1 text-xs font-bold text-on-surface-variant">
+              <div className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-surface-container px-3 py-1 text-xs font-bold text-on-surface-variant">
+                <Pencil className="size-3" />
                 Customize
               </div>
               <div className="absolute bottom-6 w-24 h-4 bg-black/20 blur-md rounded-full" />
@@ -163,22 +163,17 @@ export default function ProfilePage() {
               {/* Quote Display */}
               <Card
                 onClick={updateQuote}
-                className="cursor-pointer rounded-[1.75rem] border-0 bg-surface-container-highest p-5"
+                className="dashboardInnerPanel cursor-pointer gap-0 p-5 transition-shadow hover:shadow-[0_14px_28px_var(--card-shadow)]"
               >
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+                  <Quote className="size-4 text-tertiary" />
                   Quote
                 </p>
 
                 <p className="mt-2 text-sm italic text-on-surface-variant leading-relaxed">
-                  {quote || "💬 Share a meaningful quote from your reading"}
+                  {quote || "Share a meaningful quote from your reading"}
                 </p>
               </Card>
-
-              <Link href="/books">
-                <Button className="h-12 rounded-full bg-surface-container px-5 text-sm font-semibold text-foreground">
-                  Books
-                </Button>
-              </Link>
 
             </div>
 
@@ -187,13 +182,13 @@ export default function ProfilePage() {
 
         {/* BOOKS SECTION */}
         <section>
-          <Card className="rounded-[2.25rem] border-0 bg-surface-container-low p-5 shadow-[0_14px_30px_var(--card-shadow)]">
+          <Card className="dashboardPanel gap-0 p-5 sm:p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground">
                 Books Read
               </h2>
 
-              <Link href="/books" className="text-sm font-semibold text-primary hover:opacity-80">
+              <Link href="/books" className="cursor-pointer text-sm font-semibold text-primary hover:opacity-80">
                 View all
               </Link>
             </div>
@@ -204,9 +199,9 @@ export default function ProfilePage() {
                   <div
                     key={book._id}
                     onClick={() => setSelectedBook(book)}
-                    className="cursor-pointer transition-transform hover:-translate-y-1"
+                    className="cursor-pointer transition-opacity hover:opacity-85"
                   >
-                    <div className="aspect-[2/3] w-full overflow-hidden rounded-[1.25rem] bg-surface-container shadow-sm">
+                    <div className="bookCoverFrame aspect-[2/3] w-full overflow-hidden rounded-[1.25rem] bg-surface-container">
                       <img
                         src={book.coverUrl || "/defbookcover-min.jpg"}
                         alt={book.name}
@@ -231,30 +226,31 @@ export default function ProfilePage() {
 
       {selectedBook && (
         <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          className="fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
           onClick={() => setSelectedBook(null)}
         >
           <div
-            className="bg-white dark:bg-[#131920] rounded-2xl p-6 w-[90%] max-w-md relative"
+            className="dashboardPanel relative w-full max-w-md cursor-default p-5 sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* CLOSE */}
             <button
               onClick={() => setSelectedBook(null)}
-              className="absolute top-3 right-3"
+              className="absolute right-4 top-4 flex size-9 cursor-pointer items-center justify-center rounded-full bg-surface-container text-on-surface-variant transition hover:text-foreground"
+              type="button"
+              aria-label="Close book details"
             >
-              ✖
+              <X className="size-4" />
             </button>
 
-            {/* COVER */}
-            <img
-              src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
-              alt={`${selectedBook.name} cover`}
-              className="w-full h-48 object-cover rounded-xl"
-            />
+            <div className="bookCoverFrame mx-auto aspect-2/3 w-36 overflow-hidden rounded-[1.35rem]">
+              <img
+                src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
+                alt={`${selectedBook.name} cover`}
+                className="h-full w-full object-cover"
+              />
+            </div>
 
-            {/* TITLE */}
-            <h2 className="mt-4 text-lg font-bold statValue">
+            <h2 className="statValue mt-4 text-2xl">
               {selectedBook.name}
             </h2>
 
@@ -268,9 +264,9 @@ export default function ProfilePage() {
                 {selectedBook.pagesRead || 0} / {selectedBook.numberOfPages} pages
               </p>
 
-              <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-3 overflow-hidden rounded-full bg-surface-container">
                 <div
-                  className="h-full bg-primary"
+                  className="h-full rounded-full bg-primary"
                   style={{
                     width: `${
                       selectedBook.numberOfPages
@@ -282,12 +278,10 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* STATUS */}
-            <p className="text-xs mt-2">
-              {selectedBook.completed ? "✅ Completed" : "📖 In Progress"}
+            <p className="mt-2 text-xs font-semibold text-on-surface-variant">
+              {selectedBook.completed ? "Completed" : "In progress"}
             </p>
 
-            {/* REVIEW */}
             <div className="mt-4">
               <p className="text-sm font-bold">Your thoughts</p>
               <p className="text-sm italic">
@@ -295,7 +289,6 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            {/* EDIT REVIEW */}
             <button
               onClick={async () => {
                 const review = prompt("Update your thoughts:");
@@ -317,8 +310,9 @@ export default function ProfilePage() {
                   ),
                 }));
               }}
-              className="mt-4 primaryAction px-4 py-2 rounded-full text-sm"
+              className="primaryAction mt-4 inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 font-display text-sm font-bold"
             >
+              <Pencil className="size-4" />
               Edit Review
             </button>
           </div>
