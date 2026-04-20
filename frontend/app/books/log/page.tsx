@@ -19,6 +19,12 @@ export default function LogBookPage() {
   const [loading, setLoading] = useState(false);
 
   async function submitBook() {
+    const pageCountNum = Number(form.pageCount);
+    if (!Number.isFinite(pageCountNum) || pageCountNum <= 0) {
+      alert("Page count must be a positive number");
+      return;
+    }
+
     setLoading(true);
 
     const res = await fetch("/api/books", {
@@ -26,7 +32,7 @@ export default function LogBookPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
-        pageCount: Number(form.pageCount),
+        pageCount: Math.floor(pageCountNum),
         completed: true,
       }),
     });
@@ -48,8 +54,8 @@ export default function LogBookPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-3xl bg-surface-container-low p-6 shadow-xl">
+    <div className="flex min-h-screen items-center justify-center px-6">
+      <div className="w-full max-w-md rounded-[2.125rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
 
         <h1 className="text-3xl font-bold mb-6 text-center">
           Log a Book 🐊
@@ -58,35 +64,38 @@ export default function LogBookPage() {
         <div className="space-y-4">
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-highest p-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
             placeholder="Book Title"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-highest p-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
             placeholder="Author"
             value={form.author}
             onChange={(e) => setForm({ ...form, author: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-highest p-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
             placeholder="Genre"
             value={form.genre}
             onChange={(e) => setForm({ ...form, genre: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-highest p-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
             placeholder="ISBN (optional)"
             value={form.isbn}
             onChange={(e) => setForm({ ...form, isbn: e.target.value })}
           />
 
           <input
-            className="w-full p-3 rounded-xl bg-surface-container-highest"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-highest p-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
+            type="number"
+            min={1}
+            step={1}
             placeholder="Page Count"
             value={form.pageCount}
             onChange={(e) => setForm({ ...form, pageCount: e.target.value })}
@@ -95,7 +104,7 @@ export default function LogBookPage() {
           <Button
             onClick={submitBook}
             disabled={loading}
-            className={`w-full h-14 text-lg font-bold rounded-full primaryAction`}
+            className="primaryAction h-14 w-full rounded-full font-display text-lg font-bold text-accent-foreground"
           >
             {loading ? "Logging..." : "Add Book"}
           </Button>

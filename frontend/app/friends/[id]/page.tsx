@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
+import { PetAvatar } from "@/components/pet-avatar";
 import { Card } from "@/components/ui/card";
 
 export default function FriendProfilePage() {
@@ -51,16 +51,17 @@ export default function FriendProfilePage() {
       <div className="mx-auto max-w-3xl space-y-6">
 
         {/* HEADER (same vibe as profile) */}
-        <Card className="relative rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)] text-center">
-          
+        <Card className="relative rounded-[2.125rem] border-0 bg-surface-container-low p-6 text-center shadow-[0_18px_40px_var(--card-shadow)]">
+
           <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
             Friend Profile
           </p>
 
-          <img
-            src={data.pet?.imageID || "/gator....png"}
+          <PetAvatar
+            imageSrc={data.pet?.imageID || "/gator....png"}
+            equippedItems={data.pet?.equippedItems}
             alt="Pet"
-            className="w-32 h-32 z-10 mx-auto"
+            className="z-10 mx-auto h-32 w-32"
           />
 
           <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
@@ -78,14 +79,14 @@ export default function FriendProfilePage() {
         </Card>
 
         {/* PET SECTION */}
-        <Card className="rounded-[2.5rem] bg-secondary-container p-6 flex flex-col items-center text-center">
-          
-          <div className="relative h-40 w-40">
-            <Image
-              src={data.pet?.imageID || "/gator....png"}
+        <Card className="petStage flex flex-col items-center rounded-[2.125rem] p-6 text-center shadow-[0_14px_30px_var(--card-shadow)]">
+
+          <div className="relative flex h-48 w-48 items-center justify-center">
+            <PetAvatar
+              imageSrc={data.pet?.imageID || "/gator....png"}
+              equippedItems={data.pet?.equippedItems}
               alt="Pet"
-              fill
-              className="object-contain image-pixel"
+              className="h-48 w-48"
             />
           </div>
 
@@ -98,8 +99,8 @@ export default function FriendProfilePage() {
         </Card>
 
         {/* BOOKS */}
-        <Card className="rounded-[2.5rem] bg-surface-container-low p-6">
-          
+        <Card className="rounded-[2.125rem] border-0 bg-surface-container-low p-6 shadow-[0_14px_30px_var(--card-shadow)]">
+
           <h2 className="font-display text-xl font-extrabold mb-4">
             Recently Read
           </h2>
@@ -108,12 +109,12 @@ export default function FriendProfilePage() {
             {booksPreview?.map((book: any) => (
               <div
                 key={book._id}
-                className="secondaryAction rounded-lg overflow-hidden p-2"
+                className="secondaryAction overflow-hidden rounded-[1.25rem] p-2"
               >
                 <img
                   src={book.coverUrl || "/defbookcover-min.jpg"}
                   alt={`${book.name} cover`}
-                  className="w-full h-28 object-cover rounded-md"
+                  className="h-28 w-full rounded-[0.9rem] object-cover"
                 />
                 <p className="text-xs mt-1 truncate">
                   {book.name}

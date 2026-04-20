@@ -50,20 +50,20 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 flex cursor-pointer items-center justify-center z-50"
       onClick={onCloseAction}
     >
       <div
-        className="bg-white dark:bg-[#131920] rounded-2xl p-6 w-[90%] max-w-md relative"
+        className="relative w-[90%] max-w-md cursor-default rounded-[2rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onCloseAction} className="absolute top-3 right-3">
+        <button onClick={onCloseAction} className="absolute top-3 right-3 cursor-pointer">
           ✖
         </button>
 
         <img
           src={book.coverUrl || "/defbookcover-min.jpg"}
-          className="w-full h-48 object-cover rounded-xl"
+          className="h-48 w-full rounded-[1.25rem] object-cover"
           alt={`${book.title} cover`}
         />
 
@@ -102,7 +102,7 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
             if (!review) return;
             await patchBook({ review });
           }}
-          className="mt-4 primaryAction px-4 py-2 rounded-full text-sm"
+          className="primaryAction mt-4 cursor-pointer rounded-full px-4 py-2 text-sm text-accent-foreground"
         >
           Edit Review
         </button>
@@ -120,7 +120,7 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
 
             await patchBook({ pagesRead: Math.floor(pagesNum) });
           }}
-          className="mt-2 text-xs underline"
+          className="mt-2 cursor-pointer text-xs underline"
         >
           Update Progress
         </button>
@@ -128,5 +128,3 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
     </div>
   );
 }
-
-

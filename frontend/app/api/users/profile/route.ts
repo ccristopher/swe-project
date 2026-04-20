@@ -1,6 +1,7 @@
 import connectDB from "../../../../../backend/db/mongo";
 import { ObjectId } from "mongodb";
 import { getLevelFromTotalPages, totalsFromBooks } from "@/lib/readingProgress";
+import { cleanEquippedItems, emptyEquippedItems } from "@/lib/petItems";
 
 function toPublicPath(value: unknown, fallback: string) {
   if (typeof value !== "string" || !value.trim()) return fallback;
@@ -38,8 +39,12 @@ export async function GET(req: Request) {
     ? {
         ...pet,
         imageID: toPublicPath(pet.imageID, "/gator....png"),
+        equippedItems: cleanEquippedItems(pet.equippedItems),
       }
-    : null;
+    : {
+        imageID: "/gator....png",
+        equippedItems: emptyEquippedItems(),
+      };
 
   const normalizedBooks = books.map((book: any) => ({
     ...book,

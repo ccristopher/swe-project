@@ -47,7 +47,7 @@ export default function QuotePage() {
       <div className="mx-auto max-w-xl space-y-6">
 
         {/* HEADER */}
-        <div className="rounded-[2.5rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+        <div className="rounded-[2.125rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
           <h1 className="font-display text-3xl font-extrabold tracking-tight">
             Add Quote 💬
           </h1>
@@ -58,12 +58,12 @@ export default function QuotePage() {
         </div>
 
         {/* INPUT CARD */}
-        <div className="rounded-[2rem] bg-surface-container p-5 shadow-sm">
+        <div className="rounded-[2rem] bg-surface-container p-5 shadow-[0_10px_24px_var(--card-shadow)]">
           <textarea
             value={quote}
             onChange={(e) => setQuote(e.target.value.slice(0, MAX_CHARS))}
             placeholder="Write your favorite quote..."
-            className="h-44 w-full resize-none bg-transparent text-sm outline-none text-on-surface"
+            className="h-44 w-full resize-none rounded-[1.25rem] border border-border bg-surface-container-low p-4 text-sm text-on-surface outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
           />
 
           {/* footer */}
@@ -84,7 +84,7 @@ export default function QuotePage() {
         <div className="flex gap-3">
           <Link
             href="/profile"
-            className="flex-1 rounded-full bg-surface-container px-4 py-3 text-center text-sm font-semibold"
+            className="secondaryAction flex-1 rounded-full px-4 py-3 text-center text-sm font-semibold"
           >
             Cancel
           </Link>
@@ -92,7 +92,7 @@ export default function QuotePage() {
           <button
             onClick={handleSave}
             disabled={loading || quote.trim().length === 0}
-            className="flex-1 rounded-full bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50"
+            className="primaryAction flex-1 rounded-full px-4 py-3 font-display text-sm font-bold text-accent-foreground disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save Quote"}
           </button>

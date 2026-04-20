@@ -44,7 +44,15 @@ const petsSchema = {
         type: { bsonType: "string" },
         ownerId: { bsonType: "objectId" },
         imageID: { bsonType: "string" },
-        quote: { bsonType: "string" } 
+        quote: { bsonType: "string" },
+        equippedItems: {
+          bsonType: "object",
+          properties: {
+            head: { bsonType: ["string", "null"] },
+            neck: { bsonType: ["string", "null"] },
+            treat: { bsonType: ["string", "null"] }
+          }
+        }
       }
     }
   }
@@ -85,16 +93,24 @@ const itemsSchema = {
   }
 };
 
-// Initialize collections with validation
+let schemasPromise;
+
+// Initialize collections with validation once per warm server process.
 async function initSchemas() {
-  const db = await connectDB();
+  if (!schemasPromise) {
+    schemasPromise = (async () => {
+      const db = await connectDB();
 
-  const users = await db.createCollection('users', userSchema).catch(() => db.collection('users'));
-  const pets = await db.createCollection('pets', petsSchema).catch(() => db.collection('pets'));
-  const books = await db.createCollection('books', booksSchema).catch(() => db.collection('books'));
-  const items = await db.createCollection('items', itemsSchema).catch(() => db.collection('items'));
+      const users = await db.createCollection('users', userSchema).catch(() => db.collection('users'));
+      const pets = await db.createCollection('pets', petsSchema).catch(() => db.collection('pets'));
+      const books = await db.createCollection('books', booksSchema).catch(() => db.collection('books'));
+      const items = await db.createCollection('items', itemsSchema).catch(() => db.collection('items'));
 
-  return { users, pets, books, items };
+      return { users, pets, books, items };
+    })();
+  }
+
+  return schemasPromise;
 }
 
 module.exports = initSchemas;
