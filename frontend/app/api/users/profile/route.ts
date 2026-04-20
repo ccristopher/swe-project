@@ -1,6 +1,6 @@
 import connectDB from "../../../../../backend/db/mongo";
 import { ObjectId } from "mongodb";
-import { getLevelFromTotalPages, totalsFromBooks } from "@/lib/readingProgress";
+import { getLevelFromTotalPages } from "@/lib/readingProgress";
 import { cleanEquippedItems, emptyEquippedItems } from "@/lib/petItems";
 
 function toPublicPath(value: unknown, fallback: string) {
@@ -51,7 +51,12 @@ export async function GET(req: Request) {
     coverUrl: toPublicPath(book.coverUrl, "/defbookcover-min.jpg"),
   }));
 
-  const { totalPagesRead, booksCompleted } = totalsFromBooks(normalizedBooks);
+  const totalPagesRead = Number.isFinite(Number(user.totalPagesRead))
+    ? Math.max(0, Math.floor(Number(user.totalPagesRead)))
+    : 0;
+  const booksCompleted = Number.isFinite(Number(user.booksCompleted))
+    ? Math.max(0, Math.floor(Number(user.booksCompleted)))
+    : 0;
   const level = getLevelFromTotalPages(totalPagesRead);
 
   const rawFriends = user.friends || [];

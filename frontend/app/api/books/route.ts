@@ -1,7 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../backend/db/schema';
-import { sumPagesFromBooks } from '@/lib/readingProgress';
+import { canMarkBookCompleted, shouldAutoCompleteBook, sumPagesFromBooks } from '@/lib/readingProgress';
 import { buildUserProgressUpdate } from '@/lib/levelRewards';
+import { cleanEquippedItems, emptyEquippedItems, pruneEquippedItemsToUnlockedRewards } from '@/lib/petItems';
 const COVER_API = "https://bookcover.longitood.com/bookcover";
 
 function toPublicPath(value: unknown, fallback: string) {
@@ -17,7 +18,7 @@ export async function GET() {
       return new Response(JSON.stringify({ error: 'Not signed in' }), { status: 401 });
     }
 
-    const { users, books } = await initSchemas();
+    const { users, books, pets } = await initSchemas();
     const dbUser = await users.findOne({ clerkUserId: session.userId });
     if (!dbUser) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
@@ -49,7 +50,12 @@ export async function POST(req: Request) {
     const isbn = typeof body?.isbn === 'string' ? body.isbn : '';
 
     const pageCount = Number(body?.pageCount);
-    const completed = typeof body?.completed === 'boolean' ? body.completed : true;
+    const pagesRead =
+      body?.pagesRead !== undefined && Number.isFinite(Number(body.pagesRead)) && Number(body.pagesRead) >= 0
+        ? Math.floor(Number(body.pagesRead))
+        : 0;
+    const requestedCompleted = body?.completed === true;
+    const dnf = body?.dnf === true;
 
     if (!title || !author || !genre || !Number.isFinite(pageCount) || pageCount <= 0) {
       return new Response(
@@ -58,7 +64,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const { users, books } = await initSchemas();
+    if (requestedCompleted && !canMarkBookCompleted({ numberOfPages: pageCount, pagesRead })) {
+      return new Response(
+        JSON.stringify({ error: 'Books can only be marked complete after at least 90% progress' }),
+        { status: 400 }
+      );
+    }
+
+    const { users, books, pets } = await initSchemas();
     const dbUser = await users.findOne({ clerkUserId: session.userId });
     if (!dbUser) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
@@ -89,13 +102,38 @@ export async function POST(req: Request) {
       genre,
       isbn,
       coverUrl,
+      dnf,
       numberOfPages: Math.floor(pageCount),
-      completed,
+      pagesRead,
+      completed: dnf
+        ? false
+        : requestedCompleted
+          ? true
+          : shouldAutoCompleteBook({ numberOfPages: pageCount, pagesRead }),
     });
 
     const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
     const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
     await users.updateOne({ _id: dbUser._id }, userUpdate);
+    const unlockedRewards = Array.isArray(userUpdate.$set.unlockedRewards)
+      ? userUpdate.$set.unlockedRewards
+      : [];
+
+    const pet = await pets.findOne({ ownerId: dbUser._id });
+    const equippedItems = pet
+      ? pruneEquippedItemsToUnlockedRewards(pet.equippedItems, unlockedRewards)
+      : emptyEquippedItems();
+
+    if (pet) {
+      await pets.updateOne(
+        { ownerId: dbUser._id },
+        {
+          $set: {
+            equippedItems,
+          },
+        }
+      );
+    }
 
     const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
 
@@ -104,6 +142,10 @@ export async function POST(req: Request) {
         message: 'Book logged',
         bookId: result.insertedId,
         newLevelRewards: newRewards,
+        unlockedRewards,
+        pet: {
+          equippedItems: cleanEquippedItems(equippedItems),
+        },
       }),
       { status: 201 }
     );

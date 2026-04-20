@@ -20,6 +20,8 @@ const userSchema = {
           items: { bsonType: "objectId" },
           description: "list of friend user IDs"
         }, 
+        onboardingCompleted: { bsonType: "bool" },
+        monthlyGoalTargetPages: { bsonType: "int" },
         totalPagesRead: { bsonType: "int" },
         booksCompleted: { bsonType: "int" },
         unlockedRewards: {
@@ -69,6 +71,7 @@ const booksSchema = {
         isbn: { bsonType: "string" },
         coverURL: { bsonType: "string", description: "must be a URL string" },
         completed: { bsonType: "bool", description: "must be a boolean" },
+        dnf: { bsonType: "bool", description: "must be a boolean" },
         review: { bsonType: "string" },
         numberOfPages: { bsonType: "int", description: "must be an integer" }
       }

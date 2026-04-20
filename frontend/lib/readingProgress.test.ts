@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  canMarkBookCompleted,
   countCompletedBooks,
+  getBookStatus,
   getLevelFromTotalPages,
+  shouldAutoCompleteBook,
   sumPagesFromBooks,
 } from "./readingProgress";
 
@@ -34,5 +37,21 @@ describe("countCompletedBooks", () => {
     expect(
       countCompletedBooks([{ completed: true }, { completed: false }])
     ).toBe(1);
+  });
+});
+
+describe("completion helpers", () => {
+  it("allows manual completion at 90 percent progress", () => {
+    expect(canMarkBookCompleted({ pagesRead: 90, numberOfPages: 100 })).toBe(true);
+    expect(canMarkBookCompleted({ pagesRead: 89, numberOfPages: 100 })).toBe(false);
+  });
+
+  it("auto-completes only when progress reaches total pages", () => {
+    expect(shouldAutoCompleteBook({ pagesRead: 100, numberOfPages: 100 })).toBe(true);
+    expect(shouldAutoCompleteBook({ pagesRead: 90, numberOfPages: 100 })).toBe(false);
+  });
+
+  it("prefers DNF status over completed", () => {
+    expect(getBookStatus({ completed: true, dnf: true })).toBe("dnf");
   });
 });

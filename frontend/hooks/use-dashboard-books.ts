@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import type { CurrentRead, FinishedBook } from '@/components/home/home-content.data';
-import { sumPagesFromBooks } from '@/lib/readingProgress';
 import { cleanEquippedItems, emptyEquippedItems, type EquippedItems } from '@/lib/petItems';
 
 type ApiBook = {
@@ -9,6 +8,7 @@ type ApiBook = {
   author?: string;
   completed?: boolean;
   coverUrl?: string;
+  dnf?: boolean;
   name?: string;
   numberOfPages?: number;
   pagesRead?: number;
@@ -25,6 +25,7 @@ type DashboardBookUpdate = {
   author?: string;
   completed?: boolean;
   coverUrl?: string;
+  dnf?: boolean;
   name?: string;
   numberOfPages?: number;
   pagesRead?: number;
@@ -38,10 +39,15 @@ export type UseDashboardBooksResult = {
   currentRead: CurrentRead | null;
   displayName: string;
   leaderboardRank: number | null;
+  monthlyGoalTargetPages: number;
   recentBooks: FinishedBook[];
   isDashboardLoading: boolean;
   petEquippedItems: EquippedItems;
   petImageSrc: string;
+  replacePetEquippedItems: (items: unknown) => void;
+  replaceUnlockedRewards: (ids: string[]) => void;
+  removeBookFromDashboard: (bookId: string) => void;
+  syncUserProgress: (progress: unknown) => void;
   totalBooks: number;
   totalPagesRead: number;
   unlockedRewards: string[];
@@ -85,9 +91,9 @@ function toProgress(book: ApiBook) {
 function getCurrentRead(books: ApiBook[]): CurrentRead | null {
   if (!books.length) return null;
   const currentBook =
-    books.find((book) => book.completed === false) ??
-    books.find((book) => !book.completed) ??
-    books[0];
+    books.find((book) => book.dnf !== true && book.completed === false) ??
+    books.find((book) => book.dnf !== true && !book.completed) ??
+    books.find((book) => book.dnf !== true);
 
   if (!currentBook) return null;
 
@@ -106,6 +112,7 @@ function getCurrentRead(books: ApiBook[]): CurrentRead | null {
     coverAlt: `${title} book cover`,
     coverUrl,
     coverSrc: coverUrl,
+    dnf: Boolean(currentBook.dnf),
     metrics: [
       { label: 'Pages read', value: `${pagesRead}` },
       { label: 'Total pages', value: totalPages > 0 ? `${totalPages}` : '-' },
@@ -129,6 +136,7 @@ function getRecentBooks(books: ApiBook[]): FinishedBook[] {
     author: book.author?.trim() || 'Unknown author',
     completed: Boolean(book.completed),
     coverUrl: toCoverSrc(book.coverUrl),
+    dnf: Boolean(book.dnf),
     imageSrc: toCoverSrc(book.coverUrl),
     name: book.name?.trim() || 'Untitled book',
     numberOfPages: Number.isFinite(Number(book.numberOfPages))
@@ -145,17 +153,44 @@ function toLeaderboardRank(currentUserId: string, leaderboard: LeaderboardUser[]
   return currentUserIndex >= 0 ? currentUserIndex + 1 : null;
 }
 
+function toSafeWholeNumber(value: unknown) {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return 0;
+  return Math.max(0, Math.floor(numericValue));
+}
+
 export function useDashboardBooks(): UseDashboardBooksResult {
   const { isLoaded, user } = useUser();
   const [books, setBooks] = useState<ApiBook[] | null>(null);
   const [petImageSrc, setPetImageSrc] = useState<string | null>(null);
   const [petEquippedItems, setPetEquippedItems] = useState<EquippedItems>(emptyEquippedItems());
   const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
+  const [monthlyGoalTargetPages, setMonthlyGoalTargetPages] = useState<number | null>(null);
+  const [savedCompletedBooks, setSavedCompletedBooks] = useState<number | null>(null);
+  const [savedTotalPagesRead, setSavedTotalPagesRead] = useState<number | null>(null);
   const [unlockedRewards, setUnlockedRewards] = useState<string[]>([]);
 
   function addUnlockedRewards(ids: string[]) {
     if (!ids.length) return;
     setUnlockedRewards((prev) => Array.from(new Set([...prev, ...ids])));
+  }
+
+  function replaceUnlockedRewards(ids: string[]) {
+    setUnlockedRewards(Array.from(new Set(ids.filter((id) => typeof id === 'string'))));
+  }
+
+  function replacePetEquippedItems(items: unknown) {
+    setPetEquippedItems(cleanEquippedItems(items));
+  }
+
+  function syncUserProgress(progress: unknown) {
+    const nextProgress =
+      progress && typeof progress === 'object'
+        ? (progress as { booksCompleted?: unknown; totalPagesRead?: unknown })
+        : {};
+
+    setSavedCompletedBooks(toSafeWholeNumber(nextProgress.booksCompleted));
+    setSavedTotalPagesRead(toSafeWholeNumber(nextProgress.totalPagesRead));
   }
 
   function updateBookInDashboard(updatedBook: DashboardBookUpdate) {
@@ -173,9 +208,22 @@ export function useDashboardBooks(): UseDashboardBooksResult {
     });
   }
 
+  function removeBookFromDashboard(bookId: string) {
+    setBooks((previousBooks) => {
+      if (!previousBooks) return previousBooks;
+      return previousBooks.filter((book) => book._id !== bookId);
+    });
+  }
+
   const displayName = user?.firstName ?? user?.username ?? user?.fullName ?? 'Reader';
   const isDashboardLoading =
-    !isLoaded || (Boolean(user?.id) && (books === null || petImageSrc === null));
+    !isLoaded ||
+    (Boolean(user?.id) &&
+      (books === null ||
+        petImageSrc === null ||
+        monthlyGoalTargetPages === null ||
+        savedCompletedBooks === null ||
+        savedTotalPagesRead === null));
 
   useEffect(() => {
     let isMounted = true;
@@ -189,6 +237,9 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           setPetImageSrc('/gator....png');
           setPetEquippedItems(emptyEquippedItems());
           setLeaderboardRank(null);
+          setMonthlyGoalTargetPages(500);
+          setSavedCompletedBooks(0);
+          setSavedTotalPagesRead(0);
           setUnlockedRewards([]);
         }
         return;
@@ -199,6 +250,9 @@ export function useDashboardBooks(): UseDashboardBooksResult {
         setPetImageSrc(null);
         setPetEquippedItems(emptyEquippedItems());
         setLeaderboardRank(null);
+        setMonthlyGoalTargetPages(null);
+        setSavedCompletedBooks(null);
+        setSavedTotalPagesRead(null);
         setUnlockedRewards([]);
       }
 
@@ -227,6 +281,9 @@ export function useDashboardBooks(): UseDashboardBooksResult {
             setPetImageSrc('/gator....png');
             setPetEquippedItems(emptyEquippedItems());
             setLeaderboardRank(null);
+            setMonthlyGoalTargetPages(500);
+            setSavedCompletedBooks(0);
+            setSavedTotalPagesRead(0);
             setUnlockedRewards([]);
           }
         } else {
@@ -240,6 +297,13 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           const rewardsList = Array.isArray(rawRewards)
             ? rawRewards.filter((x: unknown) => typeof x === 'string')
             : [];
+          const savedMonthlyGoal = Number(profileData?.user?.monthlyGoalTargetPages);
+          const nextMonthlyGoalTargetPages =
+            Number.isFinite(savedMonthlyGoal) && Math.floor(savedMonthlyGoal) > 0
+              ? Math.floor(savedMonthlyGoal)
+              : 500;
+          const nextTotalPagesRead = toSafeWholeNumber(profileData?.user?.totalPagesRead);
+          const nextCompletedBooks = toSafeWholeNumber(profileData?.user?.booksCompleted);
 
           let nextRank: number | null = null;
 
@@ -255,6 +319,9 @@ export function useDashboardBooks(): UseDashboardBooksResult {
             setPetImageSrc(petImage);
             setPetEquippedItems(cleanEquippedItems(profileData?.pet?.equippedItems));
             setLeaderboardRank(nextRank);
+            setMonthlyGoalTargetPages(nextMonthlyGoalTargetPages);
+            setSavedCompletedBooks(nextCompletedBooks);
+            setSavedTotalPagesRead(nextTotalPagesRead);
             setUnlockedRewards(rewardsList);
           }
         }
@@ -264,6 +331,9 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           setPetImageSrc('/gator....png');
           setPetEquippedItems(emptyEquippedItems());
           setLeaderboardRank(null);
+          setMonthlyGoalTargetPages(500);
+          setSavedCompletedBooks(0);
+          setSavedTotalPagesRead(0);
           setUnlockedRewards([]);
         }
       }
@@ -280,18 +350,23 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const recentBooks = useMemo(() => (books ? getRecentBooks(books) : []), [books]);
   const allBooks = books ?? [];
   const totalBooks = allBooks.length;
-  const completedBooks = allBooks.filter((book) => Boolean(book.completed)).length;
-  const totalPagesRead = sumPagesFromBooks(allBooks);
+  const completedBooks = savedCompletedBooks ?? 0;
+  const totalPagesRead = savedTotalPagesRead ?? 0;
 
   return {
     completedBooks,
     currentRead,
     displayName,
     leaderboardRank,
+    monthlyGoalTargetPages: monthlyGoalTargetPages ?? 500,
     recentBooks,
     isDashboardLoading,
     petEquippedItems,
     petImageSrc: petImageSrc ?? '/gator....png',
+    replacePetEquippedItems,
+    replaceUnlockedRewards,
+    removeBookFromDashboard,
+    syncUserProgress,
     totalBooks,
     totalPagesRead,
     unlockedRewards,

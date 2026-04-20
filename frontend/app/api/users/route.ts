@@ -47,6 +47,7 @@ export async function POST() {
       email:
         user.emailAddresses?.[0]?.emailAddress || "no-email@example.com",
       createdAt: new Date(),
+      onboardingCompleted: false,
     };
 
     const result = await users.insertOne(newUser);

@@ -1,8 +1,31 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '../../../../../backend/db/schema';
 import { ObjectId } from 'mongodb';
-import { sumPagesFromBooks } from '@/lib/readingProgress';
+import { canMarkBookCompleted, shouldAutoCompleteBook, sumPagesFromBooks } from '@/lib/readingProgress';
 import { buildUserProgressUpdate } from '@/lib/levelRewards';
+import { cleanEquippedItems, emptyEquippedItems, pruneEquippedItemsToUnlockedRewards } from '@/lib/petItems';
+
+function toPublicPath(value: unknown, fallback: string) {
+  if (typeof value !== 'string' || !value.trim()) return fallback;
+  if (/^https?:\/\//i.test(value)) return value;
+  return value.startsWith('/') ? value : `/${value}`;
+}
+
+function toResponseBook(book: any) {
+  return {
+    _id: typeof book?._id?.toString === 'function' ? book._id.toString() : String(book?._id ?? ''),
+    author: typeof book?.author === 'string' ? book.author : '',
+    completed: Boolean(book?.completed),
+    coverUrl: toPublicPath(book?.coverUrl, '/defbookcover-min.jpg'),
+    dnf: Boolean(book?.dnf),
+    imageSrc: toPublicPath(book?.coverUrl, '/defbookcover-min.jpg'),
+    name: typeof book?.name === 'string' ? book.name : '',
+    numberOfPages: Number.isFinite(Number(book?.numberOfPages)) ? Math.max(0, Math.floor(Number(book.numberOfPages))) : 0,
+    pagesRead: Number.isFinite(Number(book?.pagesRead)) ? Math.max(0, Math.floor(Number(book.pagesRead))) : 0,
+    review: typeof book?.review === 'string' ? book.review : '',
+    title: typeof book?.name === 'string' ? book.name : '',
+  };
+}
 
 export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
@@ -11,7 +34,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       return new Response(JSON.stringify({ error: 'Not signed in' }), { status: 401 });
     }
 
-    const { users, books } = await initSchemas();
+    const { users, books, pets } = await initSchemas();
     const dbUser = await users.findOne({ clerkUserId: session.userId });
     if (!dbUser) {
       return new Response(JSON.stringify({ error: 'User profile not found' }), { status: 404 });
@@ -22,8 +45,19 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
       return new Response(JSON.stringify({ error: 'Invalid book id' }), { status: 400 });
     }
 
+    const existingBook = await books.findOne({ _id: new ObjectId(id), ownerId: dbUser._id });
+    if (!existingBook) {
+      return new Response(JSON.stringify({ error: 'Book not found' }), { status: 404 });
+    }
+
     const body: any = await req.json();
     const updateDoc: any = {};
+    let nextPagesRead = Number.isFinite(Number(existingBook.pagesRead)) ? Math.max(0, Math.floor(Number(existingBook.pagesRead))) : 0;
+    let nextPageCount = Number.isFinite(Number(existingBook.numberOfPages))
+      ? Math.max(0, Math.floor(Number(existingBook.numberOfPages)))
+      : 0;
+    let nextCompleted = Boolean(existingBook.completed);
+    let nextDnf = Boolean(existingBook.dnf);
 
     if (typeof body?.title === 'string' && body.title) updateDoc.name = body.title;
     if (typeof body?.author === 'string' && body.author) updateDoc.author = body.author;
@@ -39,7 +73,8 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
           status: 400,
         });
       }
-      updateDoc.pagesRead = Math.floor(pagesRead);
+      nextPagesRead = Math.floor(pagesRead);
+      updateDoc.pagesRead = nextPagesRead;
     }
     
     if (typeof body?.finishedAt === "string") {
@@ -52,9 +87,36 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
           status: 400,
         });
       }
-      updateDoc.numberOfPages = Math.floor(pageCount);
+      nextPageCount = Math.floor(pageCount);
+      updateDoc.numberOfPages = nextPageCount;
     }
-    if (typeof body?.completed === 'boolean') updateDoc.completed = body.completed;
+    if (typeof body?.dnf === 'boolean') {
+      nextDnf = body.dnf;
+    }
+
+    if (typeof body?.completed === 'boolean') {
+      if (body.completed && !canMarkBookCompleted({ numberOfPages: nextPageCount, pagesRead: nextPagesRead })) {
+        return new Response(
+          JSON.stringify({ error: 'Books can only be marked complete after at least 90% progress' }),
+          { status: 400 }
+        );
+      }
+
+      nextCompleted = body.completed;
+
+      if (body.completed) {
+        nextDnf = false;
+      }
+    } else if (!nextDnf) {
+      nextCompleted = shouldAutoCompleteBook({ numberOfPages: nextPageCount, pagesRead: nextPagesRead });
+    }
+
+    if (nextDnf) {
+      nextCompleted = false;
+    }
+
+    updateDoc.completed = nextCompleted;
+    updateDoc.dnf = nextDnf;
 
     if (Object.keys(updateDoc).length === 0) {
       return new Response(JSON.stringify({ error: 'No valid fields were provided to update' }), {
@@ -65,23 +127,58 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     const booksBefore = await books.find({ ownerId: dbUser._id }).toArray();
     const oldTotalPages = sumPagesFromBooks(booksBefore);
 
-    const result = await books.updateOne(
+    await books.updateOne(
       { _id: new ObjectId(id), ownerId: dbUser._id },
       { $set: updateDoc }
     );
 
-    if (result.matchedCount === 0) {
-      return new Response(JSON.stringify({ error: 'Book not found' }), { status: 404 });
-    }
-
     const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
     const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
     await users.updateOne({ _id: dbUser._id }, userUpdate);
+    const unlockedRewards = Array.isArray(userUpdate.$set.unlockedRewards)
+      ? userUpdate.$set.unlockedRewards
+      : [];
+    const userProgress = {
+      booksCompleted: Number.isFinite(Number(userUpdate.$set.booksCompleted))
+        ? Math.max(0, Math.floor(Number(userUpdate.$set.booksCompleted)))
+        : 0,
+      totalPagesRead: Number.isFinite(Number(userUpdate.$set.totalPagesRead))
+        ? Math.max(0, Math.floor(Number(userUpdate.$set.totalPagesRead)))
+        : 0,
+    };
+    const pet = await pets.findOne({ ownerId: dbUser._id });
+    const equippedItems = pet
+      ? pruneEquippedItemsToUnlockedRewards(pet.equippedItems, unlockedRewards)
+      : emptyEquippedItems();
+
+    if (pet) {
+      await pets.updateOne(
+        { ownerId: dbUser._id },
+        {
+          $set: {
+            equippedItems,
+          },
+        }
+      );
+    }
 
     const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
+    const updatedBook = booksAfter.find((book: any) => {
+      const candidateId = typeof book?._id?.toString === 'function' ? book._id.toString() : String(book?._id ?? '');
+      return candidateId === id;
+    });
 
     return new Response(
-      JSON.stringify({ message: 'Book updated', newLevelRewards: newRewards }),
+      JSON.stringify({
+        message: 'Book updated',
+        newLevelRewards: newRewards,
+        book: updatedBook ? toResponseBook(updatedBook) : null,
+        unlockedRewards,
+        userProgress,
+        pet: {
+          equippedItems: cleanEquippedItems(equippedItems),
+        },
+      }),
       { status: 200 }
     );
   } catch (err: any) {
@@ -107,9 +204,6 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
       return new Response(JSON.stringify({ error: 'Invalid book id' }), { status: 400 });
     }
 
-    const booksBefore = await books.find({ ownerId: dbUser._id }).toArray();
-    const oldTotalPages = sumPagesFromBooks(booksBefore);
-
     const result = await books.deleteOne({
       _id: new ObjectId(id),
       ownerId: dbUser._id,
@@ -119,14 +213,10 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
       return new Response(JSON.stringify({ error: 'Book not found' }), { status: 404 });
     }
 
-    const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
-    const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
-    await users.updateOne({ _id: dbUser._id }, userUpdate);
-
-    const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
-
     return new Response(
-      JSON.stringify({ message: 'Book deleted', newLevelRewards: newRewards }),
+      JSON.stringify({
+        message: 'Book deleted',
+      }),
       { status: 200 }
     );
   } catch (err: any) {

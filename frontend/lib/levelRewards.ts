@@ -44,15 +44,20 @@ export function rewardIdsForPagesGained(oldTotal: number, newTotal: number): str
   return out;
 }
 
+export function rewardIdsForPages(totalPages: number): string[] {
+  return rewardIdsForPagesGained(0, totalPages);
+}
+
 export function buildUserProgressUpdate(oldTotalPages: number, booksAfter: BookForPages[]) {
   const { totalPagesRead, booksCompleted } = totalsFromBooks(booksAfter);
   const newRewards = rewardIdsForPagesGained(oldTotalPages, totalPagesRead);
+  const unlockedRewards = rewardIdsForPages(totalPagesRead);
 
   const update: {
-    $set: Record<string, number>;
+    $set: Record<string, number | string[]>;
     $addToSet?: { unlockedRewards: { $each: string[] } };
   } = {
-    $set: { totalPagesRead, booksCompleted },
+    $set: { totalPagesRead, booksCompleted, unlockedRewards },
   };
 
   if (newRewards.length > 0) {
