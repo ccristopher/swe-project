@@ -19,15 +19,17 @@ const client = new MongoClient(uri, {
   }
 });
 
-let db;
+let dbPromise;
 
 async function connectDB() {
-  if (!db) {
-    await client.connect();
-    db = client.db('pet_n_prose');
-    console.log("MongoDB connected");
+  if (!dbPromise) {
+    dbPromise = client.connect().then(() => {
+      console.log("MongoDB connected");
+      return client.db('pet_n_prose');
+    });
   }
-  return db;
+
+  return dbPromise;
 }
 
 module.exports = connectDB;
