@@ -65,7 +65,7 @@ function toProgress(book: ApiBook) {
   if (safeTotalPages <= 0) {
     return {
       pagesRead: safePagesRead,
-      progress: book.completed ? 100 : 0,
+      progress: 0,
       totalPages: safeTotalPages,
     };
   }
