@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { href: '/', label: 'Dash' },
   { href: '/books', label: 'Library' },
-  { href: '/leaderboard', label: 'Social' },
+  { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/friends', label: 'Friends' },
   { href: '/profile', label: 'Profile' },
 ];
 

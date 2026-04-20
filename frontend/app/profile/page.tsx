@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import Image from "next/image";
+import { PetAvatar } from "@/components/pet-avatar";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { cleanEquippedItems } from "@/lib/petItems";
 
 export default function ProfilePage() {
   const { user } = useUser();
@@ -89,6 +89,7 @@ export default function ProfilePage() {
   }
 
   const booksPreview = data.books?.slice(0, 6);
+  const equippedItems = cleanEquippedItems(data.pet?.equippedItems);
 
   return (
     <section className="px-6 pb-16 pt-4 sm:px-8">
@@ -112,7 +113,7 @@ export default function ProfilePage() {
                   <button
                     onClick={saveUsername}
                     type="button"
-                    className="text-sm font-bold text-primary"
+                    className="cursor-pointer text-sm font-bold text-primary"
                   >
                     Save
                   </button>
@@ -136,19 +137,24 @@ export default function ProfilePage() {
           <div className="mt-6 grid gap-6 md:grid-cols-[1fr_0.9fr] md:items-center">
 
             {/* PET */}
-            <Card className="relative min-h-72 rounded-[2rem] border-0 bg-secondary-container flex items-center justify-center">
+            <Link
+              href="/profile/customize"
+              className="petStage relative flex min-h-72 cursor-pointer items-center justify-center rounded-[2rem] transition-shadow hover:shadow-[0_14px_30px_var(--card-shadow)]"
+            >
               <div className="absolute top-3 left-3 starBadge px-3 py-1 rounded-full text-sm">
                 Lv {data.level?.level ?? 1}
               </div>
+              <div className="absolute right-3 top-3 rounded-full bg-surface-container px-3 py-1 text-xs font-bold text-on-surface-variant">
+                Customize
+              </div>
               <div className="absolute bottom-6 w-24 h-4 bg-black/20 blur-md rounded-full" />
-              <Image
-                src={data.pet?.imageID || "/gator....png"}
+              <PetAvatar
+                imageSrc={data.pet?.imageID || "/gator....png"}
+                equippedItems={equippedItems}
                 alt="Pet"
-                width={192}
-                height={192}
-                className="image-pixel transition-transform duration-200 hover:scale-105"
+                className="h-48 w-48"
               />
-            </Card>
+            </Link>
 
             {/* QUOTE + CTA */}
             <div className="space-y-4">
@@ -156,7 +162,7 @@ export default function ProfilePage() {
               {/* Quote Display */}
               <Card
                 onClick={updateQuote}
-                className="cursor-pointer rounded-[1.75rem] border-0 bg-surface-container-highest p-5"
+                className="cursor-pointer rounded-[1.75rem] border-0 bg-surface-container-highest p-5 shadow-[0_10px_24px_var(--card-shadow)]"
               >
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
                   Quote
@@ -166,12 +172,6 @@ export default function ProfilePage() {
                   {quote || "💬 Share a meaningful quote from your reading"}
                 </p>
               </Card>
-
-              <Link href="/books">
-                <Button className="h-12 rounded-full bg-surface-container px-5 text-sm font-semibold text-foreground">
-                  Books
-                </Button>
-              </Link>
 
             </div>
 
@@ -197,7 +197,7 @@ export default function ProfilePage() {
                   <div
                     key={book._id}
                     onClick={() => setSelectedBook(book)}
-                    className="cursor-pointer transition-transform hover:-translate-y-1"
+                    className="cursor-pointer transition-opacity hover:opacity-85"
                   >
                     <div className="aspect-[2/3] w-full overflow-hidden rounded-[1.25rem] bg-surface-container shadow-sm">
                       <img
@@ -224,17 +224,17 @@ export default function ProfilePage() {
 
       {selectedBook && (
         <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/40 flex cursor-pointer items-center justify-center z-50"
           onClick={() => setSelectedBook(null)}
         >
           <div
-            className="bg-white dark:bg-[#131920] rounded-2xl p-6 w-[90%] max-w-md relative"
+            className="relative w-[90%] max-w-md cursor-default rounded-[2rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* CLOSE */}
             <button
               onClick={() => setSelectedBook(null)}
-              className="absolute top-3 right-3"
+              className="absolute top-3 right-3 cursor-pointer"
             >
               ✖
             </button>
@@ -243,7 +243,7 @@ export default function ProfilePage() {
             <img
               src={selectedBook.coverUrl || "/defbookcover-min.jpg"}
               alt={`${selectedBook.name} cover`}
-              className="w-full h-48 object-cover rounded-xl"
+              className="h-48 w-full rounded-[1.25rem] object-cover"
             />
 
             {/* TITLE */}
@@ -310,7 +310,7 @@ export default function ProfilePage() {
                   ),
                 }));
               }}
-              className="mt-4 primaryAction px-4 py-2 rounded-full text-sm"
+              className="primaryAction mt-4 cursor-pointer rounded-full px-4 py-2 text-sm text-accent-foreground"
             >
               Edit Review
             </button>

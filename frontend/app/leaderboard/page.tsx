@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { PetAvatar } from "@/components/pet-avatar";
 
 export default function LeaderboardPage() {
   const { user } = useUser();
@@ -49,7 +50,7 @@ export default function LeaderboardPage() {
             {/* RIGHT (ADD FRIEND) */}
             <Link
               href="/friends"
-              className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105"
+              className="primaryAction shrink-0 cursor-pointer rounded-full px-5 py-2 font-display text-sm font-bold text-accent-foreground"
             >
               Add Friend
             </Link>
@@ -62,7 +63,7 @@ export default function LeaderboardPage() {
           {leaderboard.map((u, index) => (
             <div
               key={u._id}
-              className="secondaryAction p-4 rounded-xl flex items-center justify-between"
+              className="secondaryAction flex items-center justify-between rounded-[1.75rem] p-4"
             >
               {/* LEFT SIDE */}
               <div className="flex items-center gap-3">
@@ -71,10 +72,11 @@ export default function LeaderboardPage() {
                 </span>
 
                 {/* optional pet */}
-                <img
-                  src={u.petImage || "/gator....png"}
+                <PetAvatar
+                  imageSrc={u.pet?.imageID || u.petImage || "/gator....png"}
+                  equippedItems={u.pet?.equippedItems}
                   alt={`${u.username || "Reader"} pet`}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="h-10 w-10 rounded-full"
                 />
 
                 <span className="font-semibold">

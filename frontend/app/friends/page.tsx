@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { PetAvatar } from "@/components/pet-avatar";
 
 export default function FriendsPage() {
   const { user } = useUser();
@@ -42,7 +43,7 @@ export default function FriendsPage() {
             {/* RIGHT */}
             <Link
               href="/friends/add"
-              className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105"
+              className="primaryAction shrink-0 cursor-pointer rounded-full px-5 py-2 font-display text-sm font-bold text-accent-foreground"
             >
               Add Friend
             </Link>
@@ -67,10 +68,10 @@ export default function FriendsPage() {
                   href={`/friends/${friend._id}`}
                 >
                   <div
-                    className={`flex items-center justify-between rounded-[1.75rem] p-4 transition hover:scale-[1.01] ${
+                    className={`flex cursor-pointer items-center justify-between rounded-[1.75rem] p-4 transition-shadow ${
                       isTop
-                        ? "bg-secondary-container shadow-md"
-                        : "bg-surface-container"
+                        ? "bg-secondary-container shadow-[0_12px_24px_var(--card-shadow)]"
+                        : "secondaryAction"
                     }`}
                   >
 
@@ -81,10 +82,11 @@ export default function FriendsPage() {
                         #{index + 1}
                       </span>
 
-                      <img
-                        src={friend.pet?.imageID || "/gator....png"}
+                      <PetAvatar
+                        imageSrc={friend.pet?.imageID || "/gator....png"}
+                        equippedItems={friend.pet?.equippedItems}
                         alt={`${friend.username || "Friend"} pet`}
-                        className="h-10 w-10 rounded-full object-cover"
+                        className="h-10 w-10 rounded-full"
                       />
 
                       <div>

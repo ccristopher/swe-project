@@ -53,7 +53,7 @@ export default function BooksPage() {
 
             {/* RIGHT (ADD BUTTON) */}
             <Link href="/books/log">
-              <div className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:scale-105">
+              <div className="primaryAction shrink-0 cursor-pointer rounded-full px-5 py-2 font-display text-sm font-bold text-accent-foreground">
                 Add Book
               </div>
             </Link>
@@ -64,13 +64,13 @@ export default function BooksPage() {
           <div
             key={book._id}
             onClick={() => setSelectedBook(book)}
-            className="secondaryAction p-4 rounded-xl flex gap-4 cursor-pointer hover:-translate-y-1 transition"
+            className="secondaryAction flex cursor-pointer gap-4 rounded-[1.75rem] p-4 transition-shadow hover:shadow-[0_14px_30px_var(--card-shadow)]"
           >
             {/* COVER */}
             <img
               src={book.coverUrl || "/defbookcover-min.jpg"}
               alt={`${book.name} cover`}
-              className="w-20 h-28 object-cover rounded-md"
+              className="h-28 w-20 rounded-[1rem] object-cover"
             />
 
             {/* INFO */}

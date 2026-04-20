@@ -1,16 +1,7 @@
 .primaryAction {
   background-image: linear-gradient(135deg, #ffe08a, var(--accent));
   box-shadow: 0 5px 0 0 #d4a73e;
-  transition: transform 150ms ease, box-shadow 150ms ease;
-}
-
-.primaryAction:hover {
-  transform: translateY(-2px);
-}
-
-.primaryAction:active {
-  transform: translateY(5px);
-  box-shadow: 0 0 0 0 #d4a73e;
+  transition: opacity 150ms ease, box-shadow 150ms ease;
 }
 
 .secondaryAction {

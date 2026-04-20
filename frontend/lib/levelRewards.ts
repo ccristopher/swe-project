@@ -12,15 +12,15 @@ export function rewardIdForLevel(level: number): string {
 /** Human-readable name for the reward earned when you *reach* this level (level ≥ 2). */
 export function rewardLabelForLevel(level: number): string {
   const names: Record<number, string> = {
-    2: "Bronze bookmark",
-    3: "Silver ribbon",
-    4: "Gold star sticker",
-    5: "Reading cap patch",
-    6: "Scholar bookmark",
-    7: "Library badge",
-    8: "Storyteller charm",
-    9: "Bookworm pin",
-    10: "Legend reader frame",
+    2: "Hat",
+    3: "Scarf",
+    4: "Sandwich",
+    5: "Item 4",
+    6: "Item 5",
+    7: "Item 6",
+    8: "Item 7",
+    9: "Item 8",
+    10: "Item 9",
   };
   if (names[level]) return names[level];
   if (level < 2) return "";

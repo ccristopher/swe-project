@@ -48,19 +48,19 @@ export default function AddFriendPage() {
     <section className="px-6 pb-16 pt-6 sm:px-8">
       <div className="mx-auto max-w-xl space-y-6">
 
-        <Card className="rounded-[2.5rem] bg-surface-container-low p-6">
-          <h1 className="text-2xl font-bold">Add Friend 👥</h1>
+        <Card className="rounded-[2.125rem] border-0 bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground">Add Friend 👥</h1>
           <p className="text-sm text-on-surface-variant mt-2">
             Enter a username
           </p>
         </Card>
 
-        <Card className="rounded-[2rem] bg-surface-container p-5 space-y-3">
+        <Card className="space-y-3 rounded-[2rem] border-0 bg-surface-container p-5 shadow-[0_10px_24px_var(--card-shadow)]">
           <input
             value={friendUsername}
             onChange={(e) => setFriendUsername(e.target.value)}
             placeholder="Username"
-            className="w-full bg-transparent outline-none border-b border-border pb-2"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-low px-4 py-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
           />
 
           {message && (
@@ -71,7 +71,7 @@ export default function AddFriendPage() {
         <div className="flex gap-3">
           <Link
             href="/friends"
-            className="flex-1 rounded-full bg-surface-container px-4 py-3 text-center text-sm font-semibold"
+            className="secondaryAction flex-1 rounded-full px-4 py-3 text-center text-sm font-semibold"
           >
             Cancel
           </Link>
@@ -79,7 +79,7 @@ export default function AddFriendPage() {
           <Button
             onClick={handleAddFriend}
             disabled={loading || !friendUsername.trim()}
-            className="flex-1 rounded-full font-bold"
+            className="primaryAction flex-1 rounded-full font-display font-bold text-accent-foreground"
           >
             {loading ? "Adding..." : "Add Friend"}
           </Button>
