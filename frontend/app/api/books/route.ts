@@ -51,8 +51,11 @@ export async function POST(req: Request) {
     const pageCount = Number(body?.pageCount);
     const completed = typeof body?.completed === 'boolean' ? body.completed : true;
 
-    if (!title || !author || !genre || !Number.isFinite(pageCount) || pageCount < 0) {
-      return new Response(JSON.stringify({ error: 'Missing or invalid book fields' }), { status: 400 });
+    if (!title || !author || !genre || !Number.isFinite(pageCount) || pageCount <= 0) {
+      return new Response(
+        JSON.stringify({ error: 'Missing or invalid book fields (pageCount must be > 0)' }),
+        { status: 400 }
+      );
     }
 
     const { users, books } = await initSchemas();

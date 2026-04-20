@@ -47,8 +47,8 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
     }
     if (body?.pageCount !== undefined) {
       const pageCount = Number(body.pageCount);
-      if (!Number.isFinite(pageCount) || pageCount < 0) {
-        return new Response(JSON.stringify({ error: 'pageCount must be a non-negative number' }), {
+      if (!Number.isFinite(pageCount) || pageCount <= 0) {
+        return new Response(JSON.stringify({ error: 'pageCount must be a positive number' }), {
           status: 400,
         });
       }

@@ -19,6 +19,12 @@ export default function LogBookPage() {
   const [loading, setLoading] = useState(false);
 
   async function submitBook() {
+    const pageCountNum = Number(form.pageCount);
+    if (!Number.isFinite(pageCountNum) || pageCountNum <= 0) {
+      alert("Page count must be a positive number");
+      return;
+    }
+
     setLoading(true);
 
     const res = await fetch("/api/books", {
@@ -26,7 +32,7 @@ export default function LogBookPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
-        pageCount: Number(form.pageCount),
+        pageCount: Math.floor(pageCountNum),
         completed: true,
       }),
     });
@@ -87,6 +93,9 @@ export default function LogBookPage() {
 
           <input
             className="w-full rounded-[1.25rem] border border-border bg-surface-container-highest p-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
+            type="number"
+            min={1}
+            step={1}
             placeholder="Page Count"
             value={form.pageCount}
             onChange={(e) => setForm({ ...form, pageCount: e.target.value })}
