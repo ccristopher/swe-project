@@ -13,9 +13,9 @@ type PetAvatarProps = {
 };
 
 const itemPositions = {
-  head: "left-1/2 top-[2%] h-[38%] w-[38%] -translate-x-1/2",
-  neck: "left-1/2 top-[45%] h-[34%] w-[34%] -translate-x-1/2",
-  treat: "bottom-[2%] right-[5%] h-[34%] w-[34%]",
+  head: "left-1/2 top-[0%] h-[100%] w-[100%] -translate-x-1/2",
+  neck: "left-1/2 top-[0%] h-[100%] w-[100%] -translate-x-1/2",
+  treat: "bottom-[-30%] right-[0%] h-[100%] w-[100%]",
 };
 
 export function PetAvatar({
