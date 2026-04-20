@@ -201,31 +201,7 @@
     color: var(--foreground);
   }
 
-  .dashboardPanel {
-    background: var(--surface-container-low);
-    border: 0;
-    border-radius: 2.125rem;
-    box-shadow: 0 14px 30px var(--card-shadow);
-  }
-
-  .dashboardInnerPanel {
-    background: var(--surface-container);
-    border: 1px solid var(--border);
-    border-radius: 1.9rem;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.24),
-      0 10px 20px var(--card-shadow);
-  }
-
-  .bookCoverFrame {
-    background: var(--background);
-    border: 1px solid var(--border);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      0 12px 24px var(--card-shadow);
-  }
-
-  .petStageGrid {
+  .petStage {
     background-color: var(--secondary-container);
     background-image:
       repeating-linear-gradient(
@@ -259,19 +235,5 @@
     font-family: var(--font-display-family), var(--font-body), "Segoe UI", sans-serif;
     font-weight: 800;
     letter-spacing: 0;
-  }
-
-  .dashboardInput {
-    background: var(--surface-container);
-    border: 1px solid var(--border);
-    border-radius: 1.25rem;
-    color: var(--foreground);
-    outline: none;
-    transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
-  }
-
-  .dashboardInput:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--ring);
   }
 }

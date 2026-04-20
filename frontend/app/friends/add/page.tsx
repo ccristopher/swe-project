@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, UserPlus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -46,53 +45,43 @@ export default function AddFriendPage() {
   }
 
   return (
-    <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
+    <section className="px-6 pb-16 pt-6 sm:px-8">
       <div className="mx-auto max-w-xl space-y-6">
 
-        <Card className="dashboardPanel gap-0 p-6 sm:p-7">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
-            Social
-          </p>
-          <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-foreground">
-            Add friend
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-            Enter a username to add someone to your reading circle.
+        <Card className="rounded-[2.125rem] border-0 bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground">Add Friend 👥</h1>
+          <p className="text-sm text-on-surface-variant mt-2">
+            Enter a username
           </p>
         </Card>
 
-        <Card className="dashboardPanel gap-0 space-y-3 p-5 sm:p-6">
+        <Card className="space-y-3 rounded-[2rem] border-0 bg-surface-container p-5 shadow-[0_10px_24px_var(--card-shadow)]">
           <input
             value={friendUsername}
             onChange={(e) => setFriendUsername(e.target.value)}
             placeholder="Username"
-            className="dashboardInput w-full px-4 py-3 text-sm"
+            className="w-full rounded-[1.25rem] border border-border bg-surface-container-low px-4 py-3 outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
           />
 
           {message && (
-            <p className="text-sm font-semibold text-on-surface-variant">{message}</p>
+            <p className="text-xs text-on-surface-variant">{message}</p>
           )}
         </Card>
 
         <div className="flex gap-3">
-          <Button
-            asChild
-            className="secondaryAction h-12 flex-1 rounded-full font-display text-sm font-bold"
-            variant="outline"
+          <Link
+            href="/friends"
+            className="secondaryAction flex-1 rounded-full px-4 py-3 text-center text-sm font-semibold"
           >
-            <Link href="/friends">
-              <ArrowLeft className="size-4" />
-              Cancel
-            </Link>
-          </Button>
+            Cancel
+          </Link>
 
           <Button
             onClick={handleAddFriend}
             disabled={loading || !friendUsername.trim()}
-            className="primaryAction h-12 flex-1 rounded-full font-display text-sm font-bold"
+            className="primaryAction flex-1 rounded-full font-display font-bold text-accent-foreground"
           >
-            <UserPlus className="size-4" />
-            {loading ? "Adding..." : "Add friend"}
+            {loading ? "Adding..." : "Add Friend"}
           </Button>
         </div>
 

@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, BookOpen } from "lucide-react";
-import Link from "next/link";
 import { PetAvatar } from "@/components/pet-avatar";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default function FriendProfilePage() {
@@ -50,47 +47,41 @@ export default function FriendProfilePage() {
   const booksPreview = data.books?.slice(0, 6);
 
   return (
-    <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
-      <div className="mx-auto max-w-4xl space-y-5">
-        <Card className="dashboardPanel relative gap-0 p-6 text-center sm:p-7">
-          <Button
-            asChild
-            className="secondaryAction absolute left-4 top-4 h-10 rounded-full px-4 text-sm font-bold"
-            variant="outline"
-          >
-            <Link href="/friends">
-              <ArrowLeft className="size-4" />
-              Back
-            </Link>
-          </Button>
+    <section className="px-6 pb-16 pt-6 sm:px-8">
+      <div className="mx-auto max-w-3xl space-y-6">
 
-          <div className="starBadge absolute right-4 top-4 z-10 rounded-full px-3 py-1 text-xs">
-            Lv {data.level?.level ?? 1}
-          </div>
+        {/* HEADER (same vibe as profile) */}
+        <Card className="relative rounded-[2.125rem] border-0 bg-surface-container-low p-6 text-center shadow-[0_18px_40px_var(--card-shadow)]">
 
-          <p className="mt-12 text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant sm:mt-2">
-            Friend profile
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
+            Friend Profile
           </p>
 
           <PetAvatar
             imageSrc={data.pet?.imageID || "/gator....png"}
             equippedItems={data.pet?.equippedItems}
             alt="Pet"
-            className="z-10 mx-auto mt-3 h-32 w-32"
+            className="z-10 mx-auto h-32 w-32"
           />
 
-          <h1 className="statValue mt-3 text-3xl">
+          <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
+            Lv {data.level?.level ?? 1}
+          </div>
+
+          <h1 className="text-xl font-bold statValue mt-2">
             {data.user?.username}
           </h1>
 
-          <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-            Reading journey and pet companion.
+          <p className="mt-2 text-sm text-on-surface-variant">
+            Reading journey & pet companion
           </p>
+
         </Card>
 
-        <Card className="dashboardPanel gap-0 p-5 text-center sm:p-6">
-          <div className="petStageGrid relative flex min-h-72 items-center justify-center rounded-[2.25rem]">
-            <div className="absolute bottom-8 h-5 w-32 rounded-full bg-foreground/15 blur-md" />
+        {/* PET SECTION */}
+        <Card className="petStage flex flex-col items-center rounded-[2.125rem] p-6 text-center shadow-[0_14px_30px_var(--card-shadow)]">
+
+          <div className="relative flex h-48 w-48 items-center justify-center">
             <PetAvatar
               imageSrc={data.pet?.imageID || "/gator....png"}
               equippedItems={data.pet?.equippedItems}
@@ -99,45 +90,38 @@ export default function FriendProfilePage() {
             />
           </div>
 
-          <Card className="dashboardInnerPanel mx-auto mt-4 max-w-md gap-0 p-4">
-            <p className="text-sm italic leading-6 text-on-surface-variant">
+          <div className="mt-4 rounded-[1.5rem] bg-surface-container p-4 max-w-sm">
+            <p className="text-sm text-on-surface-variant italic">
               {data.pet?.quote || "No quote yet"}
             </p>
-          </Card>
+          </div>
 
         </Card>
 
-        <Card className="dashboardPanel gap-0 p-5 sm:p-6">
-          <h2 className="mb-4 font-display text-2xl font-extrabold tracking-tight text-foreground">
+        {/* BOOKS */}
+        <Card className="rounded-[2.125rem] border-0 bg-surface-container-low p-6 shadow-[0_14px_30px_var(--card-shadow)]">
+
+          <h2 className="font-display text-xl font-extrabold mb-4">
             Recently Read
           </h2>
 
-          {booksPreview?.length ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
-              {booksPreview.map((book: any) => (
-                <Card
-                  key={book._id}
-                  className="secondaryAction gap-0 overflow-hidden rounded-[1.4rem] p-2"
-                >
-                  <div className="bookCoverFrame aspect-2/3 overflow-hidden rounded-[1rem]">
-                    <img
-                      src={book.coverUrl || "/defbookcover-min.jpg"}
-                      alt={`${book.name} cover`}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <p className="mt-2 flex items-center gap-1 truncate text-xs font-semibold text-foreground">
-                    <BookOpen className="size-3 shrink-0 text-primary" />
-                    {book.name}
-                  </p>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm font-medium text-on-surface-variant">
-              No books shared yet.
-            </p>
-          )}
+          <div className="grid grid-cols-3 gap-3">
+            {booksPreview?.map((book: any) => (
+              <div
+                key={book._id}
+                className="secondaryAction overflow-hidden rounded-[1.25rem] p-2"
+              >
+                <img
+                  src={book.coverUrl || "/defbookcover-min.jpg"}
+                  alt={`${book.name} cover`}
+                  className="h-28 w-full rounded-[0.9rem] object-cover"
+                />
+                <p className="text-xs mt-1 truncate">
+                  {book.name}
+                </p>
+              </div>
+            ))}
+          </div>
         </Card>
 
       </div>

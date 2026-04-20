@@ -1,9 +1,6 @@
 "use client";
 
-import { BookOpen, Pencil, X } from "lucide-react";
 import type { FinishedBook } from "@/components/home/home-content.data";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 
 type BookDetailsModalProps = {
   book: FinishedBook | null;
@@ -53,49 +50,45 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
 
   return (
     <div
-      className="fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
+      className="fixed inset-0 bg-black/40 flex cursor-pointer items-center justify-center z-50"
       onClick={onCloseAction}
     >
       <div
-        className="dashboardPanel relative w-full max-w-md cursor-default p-5 sm:p-6"
+        className="relative w-[90%] max-w-md cursor-default rounded-[2rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onCloseAction}
-          className="absolute right-4 top-4 flex size-9 cursor-pointer items-center justify-center rounded-full bg-surface-container text-on-surface-variant transition hover:text-foreground"
-          type="button"
-          aria-label="Close book details"
-        >
-          <X className="size-4" />
+        <button onClick={onCloseAction} className="absolute top-3 right-3 cursor-pointer">
+          ✖
         </button>
 
-        <div className="bookCoverFrame mx-auto aspect-2/3 w-36 overflow-hidden rounded-[1.35rem]">
-          <img
-            src={book.coverUrl || "/defbookcover-min.jpg"}
-            className="h-full w-full object-cover"
-            alt={`${book.title} cover`}
-          />
-        </div>
+        <img
+          src={book.coverUrl || "/defbookcover-min.jpg"}
+          className="h-48 w-full rounded-[1.25rem] object-cover"
+          alt={`${book.title} cover`}
+        />
 
-        <h2 className="statValue mt-4 text-2xl">{book.name}</h2>
+        <h2 className="mt-4 text-lg font-bold statValue">{book.name}</h2>
         <p className="text-sm progressLabel">{book.author}</p>
 
         <div className="mt-4">
-          <p className="mb-2 text-xs font-semibold text-on-surface-variant">
+          <p className="text-xs mb-1">
             {book.pagesRead || 0} / {book.numberOfPages} pages
           </p>
 
-          <Progress
-            aria-label={`${book.name} progress`}
-            className="h-3 rounded-full bg-surface-container"
-            indicatorClassName="rounded-full bg-primary"
-            value={book.numberOfPages ? ((book.pagesRead || 0) / book.numberOfPages) * 100 : 0}
-          />
+          <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary"
+              style={{
+                width: `${
+                  book.numberOfPages ? ((book.pagesRead || 0) / book.numberOfPages) * 100 : 0
+                }%`,
+              }}
+            />
+          </div>
         </div>
 
-        <p className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-on-surface-variant">
-          <BookOpen className="size-3.5" />
-          {book.completed ? "Completed" : "In progress"}
+        <p className="text-xs mt-2">
+          {book.completed ? "✅ Completed" : "📖 In Progress"}
         </p>
 
         <div className="mt-4">
@@ -103,17 +96,16 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
           <p className="text-sm italic">{book.review || "No review yet..."}</p>
         </div>
 
-        <Button
+        <button
           onClick={async () => {
             const review = prompt("Update your thoughts:");
             if (!review) return;
             await patchBook({ review });
           }}
-          className="primaryAction mt-4 h-10 rounded-full px-4 font-display text-sm font-bold"
+          className="primaryAction mt-4 cursor-pointer rounded-full px-4 py-2 text-sm text-accent-foreground"
         >
-          <Pencil className="size-4" />
           Edit Review
-        </Button>
+        </button>
 
         <button
           onClick={async () => {
@@ -128,8 +120,7 @@ export function BookDetailsModal({ book, onCloseAction, onBookUpdatedAction }: B
 
             await patchBook({ pagesRead: Math.floor(pagesNum) });
           }}
-          className="mt-3 block cursor-pointer text-xs font-semibold text-primary-dim hover:text-on-primary-container"
-          type="button"
+          className="mt-2 cursor-pointer text-xs underline"
         >
           Update Progress
         </button>

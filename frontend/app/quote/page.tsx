@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Quote, Save } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 const MAX_CHARS = 300;
 
@@ -46,64 +43,59 @@ export default function QuotePage() {
   }
 
   return (
-    <section className="px-6 pb-16 pt-4 sm:px-8 sm:pb-20">
+    <section className="px-6 pb-16 pt-6 sm:px-8">
       <div className="mx-auto max-w-xl space-y-6">
 
-        <Card className="dashboardPanel gap-0 p-6 sm:p-7">
-          <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">
-            <Quote className="size-4 text-tertiary" />
-            Profile
-          </p>
+        {/* HEADER */}
+        <div className="rounded-[2.125rem] bg-surface-container-low p-6 shadow-[0_18px_40px_var(--card-shadow)]">
           <h1 className="font-display text-3xl font-extrabold tracking-tight">
-            Add quote
+            Add Quote 💬
           </h1>
 
-          <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+          <p className="mt-2 text-sm text-on-surface-variant">
             Save a meaningful line from your reading (max 300 characters)
           </p>
-        </Card>
+        </div>
 
-        <Card className="dashboardPanel gap-0 p-5 sm:p-6">
+        {/* INPUT CARD */}
+        <div className="rounded-[2rem] bg-surface-container p-5 shadow-[0_10px_24px_var(--card-shadow)]">
           <textarea
             value={quote}
             onChange={(e) => setQuote(e.target.value.slice(0, MAX_CHARS))}
             placeholder="Write your favorite quote..."
-            className="dashboardInput h-44 w-full resize-none p-4 text-sm leading-6"
+            className="h-44 w-full resize-none rounded-[1.25rem] border border-border bg-surface-container-low p-4 text-sm text-on-surface outline-none focus:border-primary focus:ring-3 focus:ring-ring/40"
           />
 
+          {/* footer */}
           <div className="mt-3 flex items-center justify-between text-xs">
             <span
               className={
                 remaining < 20
-                  ? "text-destructive"
+                  ? "text-red-400"
                   : "text-on-surface-variant"
               }
             >
               {remaining} characters left
             </span>
           </div>
-        </Card>
+        </div>
 
+        {/* ACTIONS */}
         <div className="flex gap-3">
-          <Button
-            asChild
-            className="secondaryAction h-12 flex-1 rounded-full font-display text-sm font-bold"
-            variant="outline"
+          <Link
+            href="/profile"
+            className="secondaryAction flex-1 rounded-full px-4 py-3 text-center text-sm font-semibold"
           >
-            <Link href="/profile">
-              <ArrowLeft className="size-4" />
-              Cancel
-            </Link>
-          </Button>
+            Cancel
+          </Link>
 
-          <Button
+          <button
             onClick={handleSave}
             disabled={loading || quote.trim().length === 0}
-            className="primaryAction h-12 flex-1 rounded-full font-display text-sm font-bold disabled:opacity-50"
+            className="primaryAction flex-1 rounded-full px-4 py-3 font-display text-sm font-bold text-accent-foreground disabled:opacity-50"
           >
-            <Save className="size-4" />
             {loading ? "Saving..." : "Save Quote"}
-          </Button>
+          </button>
         </div>
 
       </div>
