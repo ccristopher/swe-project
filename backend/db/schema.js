@@ -20,6 +20,8 @@ const userSchema = {
           items: { bsonType: "objectId" },
           description: "list of friend user IDs"
         }, 
+        onboardingCompleted: { bsonType: "bool" },
+        monthlyGoalTargetPages: { bsonType: "int" },
         totalPagesRead: { bsonType: "int" },
         booksCompleted: { bsonType: "int" },
         unlockedRewards: {

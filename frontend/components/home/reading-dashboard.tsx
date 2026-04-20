@@ -28,6 +28,7 @@ export function ReadingDashboard() {
     displayName,
     isDashboardLoading,
     leaderboardRank,
+    monthlyGoalTargetPages,
     unlockedRewards,
     addUnlockedRewards,
     petImageSrc,
@@ -55,9 +56,9 @@ export function ReadingDashboard() {
       ? 'Nice progress. Keep reading to finish even more this month.'
       : 'Start your first book this month and build your reading habit.',
     currentPages: totalPagesRead,
-    progress: Math.min(100, (totalPagesRead / 500) * 100),
-    progressLabel: `${Math.min(100, Math.round((totalPagesRead / 500) * 100))}%`,
-    targetPages: 500,
+    progress: Math.min(100, (totalPagesRead / monthlyGoalTargetPages) * 100),
+    progressLabel: `${Math.min(100, Math.round((totalPagesRead / monthlyGoalTargetPages) * 100))}%`,
+    targetPages: monthlyGoalTargetPages,
   };
 
   if (isDashboardLoading) {

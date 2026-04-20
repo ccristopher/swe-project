@@ -37,6 +37,7 @@ export type UseDashboardBooksResult = {
   currentRead: CurrentRead | null;
   displayName: string;
   leaderboardRank: number | null;
+  monthlyGoalTargetPages: number;
   recentBooks: FinishedBook[];
   isDashboardLoading: boolean;
   petImageSrc: string;
@@ -148,6 +149,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const [books, setBooks] = useState<ApiBook[] | null>(null);
   const [petImageSrc, setPetImageSrc] = useState<string | null>(null);
   const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
+  const [monthlyGoalTargetPages, setMonthlyGoalTargetPages] = useState<number | null>(null);
   const [unlockedRewards, setUnlockedRewards] = useState<string[]>([]);
 
   function addUnlockedRewards(ids: string[]) {
@@ -172,7 +174,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
 
   const displayName = user?.firstName ?? user?.username ?? user?.fullName ?? 'Reader';
   const isDashboardLoading =
-    !isLoaded || (Boolean(user?.id) && (books === null || petImageSrc === null));
+    !isLoaded || (Boolean(user?.id) && (books === null || petImageSrc === null || monthlyGoalTargetPages === null));
 
   useEffect(() => {
     let isMounted = true;
@@ -185,6 +187,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           setBooks([]);
           setPetImageSrc('/gator....png');
           setLeaderboardRank(null);
+          setMonthlyGoalTargetPages(500);
           setUnlockedRewards([]);
         }
         return;
@@ -194,6 +197,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
         setBooks(null);
         setPetImageSrc(null);
         setLeaderboardRank(null);
+        setMonthlyGoalTargetPages(null);
         setUnlockedRewards([]);
       }
 
@@ -221,6 +225,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           if (isMounted) {
             setPetImageSrc('/gator....png');
             setLeaderboardRank(null);
+            setMonthlyGoalTargetPages(500);
             setUnlockedRewards([]);
           }
         } else {
@@ -234,6 +239,11 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           const rewardsList = Array.isArray(rawRewards)
             ? rawRewards.filter((x: unknown) => typeof x === 'string')
             : [];
+          const savedMonthlyGoal = Number(profileData?.user?.monthlyGoalTargetPages);
+          const nextMonthlyGoalTargetPages =
+            Number.isFinite(savedMonthlyGoal) && Math.floor(savedMonthlyGoal) > 0
+              ? Math.floor(savedMonthlyGoal)
+              : 500;
 
           let nextRank: number | null = null;
 
@@ -248,6 +258,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           if (isMounted) {
             setPetImageSrc(petImage);
             setLeaderboardRank(nextRank);
+            setMonthlyGoalTargetPages(nextMonthlyGoalTargetPages);
             setUnlockedRewards(rewardsList);
           }
         }
@@ -256,6 +267,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
           setBooks([]);
           setPetImageSrc('/gator....png');
           setLeaderboardRank(null);
+          setMonthlyGoalTargetPages(500);
           setUnlockedRewards([]);
         }
       }
@@ -280,6 +292,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
     currentRead,
     displayName,
     leaderboardRank,
+    monthlyGoalTargetPages: monthlyGoalTargetPages ?? 500,
     recentBooks,
     isDashboardLoading,
     petImageSrc: petImageSrc ?? '/gator....png',
