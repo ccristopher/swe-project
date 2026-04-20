@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { PetAvatar } from "@/components/pet-avatar";
 
 export default function LeaderboardPage() {
   const { user } = useUser();
@@ -71,10 +72,11 @@ export default function LeaderboardPage() {
                 </span>
 
                 {/* optional pet */}
-                <img
-                  src={u.petImage || "/gator....png"}
+                <PetAvatar
+                  imageSrc={u.pet?.imageID || u.petImage || "/gator....png"}
+                  equippedItems={u.pet?.equippedItems}
                   alt={`${u.username || "Reader"} pet`}
-                  className="image-pixel h-10 w-10 rounded-full object-contain"
+                  className="h-10 w-10 rounded-full"
                 />
 
                 <span className="font-semibold">

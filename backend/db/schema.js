@@ -42,7 +42,15 @@ const petsSchema = {
         type: { bsonType: "string" },
         ownerId: { bsonType: "objectId" },
         imageID: { bsonType: "string" },
-        quote: { bsonType: "string" } 
+        quote: { bsonType: "string" },
+        equippedItems: {
+          bsonType: "object",
+          properties: {
+            head: { bsonType: ["string", "null"] },
+            neck: { bsonType: ["string", "null"] },
+            treat: { bsonType: ["string", "null"] }
+          }
+        }
       }
     }
   }

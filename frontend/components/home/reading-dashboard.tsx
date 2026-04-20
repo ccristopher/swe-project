@@ -7,7 +7,9 @@ import Link from 'next/link';
 import { useDashboardBooks } from '@/hooks/use-dashboard-books';
 import { getLevelFromTotalPages, READING_PAGES_PER_LEVEL } from '@/lib/readingProgress';
 import { labelForRewardId, rewardLabelForLevel } from '@/lib/levelRewards';
+import type { EquippedItems } from '@/lib/petItems';
 import { BookDetailsModal } from '@/components/books/book-details-modal';
+import { PetAvatar } from '@/components/pet-avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,6 +32,7 @@ export function ReadingDashboard() {
     leaderboardRank,
     unlockedRewards,
     addUnlockedRewards,
+    petEquippedItems,
     petImageSrc,
     recentBooks,
     totalBooks,
@@ -143,6 +146,7 @@ export function ReadingDashboard() {
 
           <aside className="space-y-4">
             <PetSummaryPanel
+              petEquippedItems={petEquippedItems}
               petImageSrc={petImageSrc}
               totalPagesRead={totalPagesRead}
             />
@@ -351,9 +355,11 @@ function MonthlyGoalPanel({ monthlyGoal }: { monthlyGoal: MonthlyGoal }) {
 }
 
 function PetSummaryPanel({
+  petEquippedItems,
   petImageSrc,
   totalPagesRead,
 }: {
+  petEquippedItems: EquippedItems;
   petImageSrc: string;
   totalPagesRead: number;
 }) {
@@ -378,10 +384,11 @@ function PetSummaryPanel({
 
       <Card className={`relative mt-4 min-h-72 gap-0 rounded-[2.25rem] border-0 px-5 pb-5 pt-6 shadow-none ${styles.dashboardPetStage}`}>
         <div className="relative z-10 flex w-full justify-center">
-          <img
-            src={petImageSrc}
+          <PetAvatar
+            imageSrc={petImageSrc}
+            equippedItems={petEquippedItems}
             alt="Reading companion"
-            className="image-pixel mx-auto mt-3 h-48 w-48 object-contain object-center"
+            className="mx-auto mt-3 h-48 w-48"
           />
         </div>
       </Card>

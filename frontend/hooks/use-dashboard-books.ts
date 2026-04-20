@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import type { CurrentRead, FinishedBook } from '@/components/home/home-content.data';
 import { sumPagesFromBooks } from '@/lib/readingProgress';
+import { cleanEquippedItems, emptyEquippedItems, type EquippedItems } from '@/lib/petItems';
 
 type ApiBook = {
   _id?: string;
@@ -39,6 +40,7 @@ export type UseDashboardBooksResult = {
   leaderboardRank: number | null;
   recentBooks: FinishedBook[];
   isDashboardLoading: boolean;
+  petEquippedItems: EquippedItems;
   petImageSrc: string;
   totalBooks: number;
   totalPagesRead: number;
@@ -147,6 +149,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
   const { isLoaded, user } = useUser();
   const [books, setBooks] = useState<ApiBook[] | null>(null);
   const [petImageSrc, setPetImageSrc] = useState<string | null>(null);
+  const [petEquippedItems, setPetEquippedItems] = useState<EquippedItems>(emptyEquippedItems());
   const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
   const [unlockedRewards, setUnlockedRewards] = useState<string[]>([]);
 
@@ -184,6 +187,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
         if (isMounted) {
           setBooks([]);
           setPetImageSrc('/gator....png');
+          setPetEquippedItems(emptyEquippedItems());
           setLeaderboardRank(null);
           setUnlockedRewards([]);
         }
@@ -193,6 +197,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
       if (isMounted) {
         setBooks(null);
         setPetImageSrc(null);
+        setPetEquippedItems(emptyEquippedItems());
         setLeaderboardRank(null);
         setUnlockedRewards([]);
       }
@@ -220,6 +225,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
         if (!profileResponse.ok) {
           if (isMounted) {
             setPetImageSrc('/gator....png');
+            setPetEquippedItems(emptyEquippedItems());
             setLeaderboardRank(null);
             setUnlockedRewards([]);
           }
@@ -247,6 +253,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
 
           if (isMounted) {
             setPetImageSrc(petImage);
+            setPetEquippedItems(cleanEquippedItems(profileData?.pet?.equippedItems));
             setLeaderboardRank(nextRank);
             setUnlockedRewards(rewardsList);
           }
@@ -255,6 +262,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
         if (isMounted) {
           setBooks([]);
           setPetImageSrc('/gator....png');
+          setPetEquippedItems(emptyEquippedItems());
           setLeaderboardRank(null);
           setUnlockedRewards([]);
         }
@@ -282,6 +290,7 @@ export function useDashboardBooks(): UseDashboardBooksResult {
     leaderboardRank,
     recentBooks,
     isDashboardLoading,
+    petEquippedItems,
     petImageSrc: petImageSrc ?? '/gator....png',
     totalBooks,
     totalPagesRead,
@@ -290,6 +299,5 @@ export function useDashboardBooks(): UseDashboardBooksResult {
     updateBookInDashboard,
   };
 }
-
 
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { PetAvatar } from "@/components/pet-avatar";
 
 export default function FriendsPage() {
   const { user } = useUser();
@@ -81,10 +82,11 @@ export default function FriendsPage() {
                         #{index + 1}
                       </span>
 
-                      <img
-                        src={friend.pet?.imageID || "/gator....png"}
+                      <PetAvatar
+                        imageSrc={friend.pet?.imageID || "/gator....png"}
+                        equippedItems={friend.pet?.equippedItems}
                         alt={`${friend.username || "Friend"} pet`}
-                        className="image-pixel h-10 w-10 rounded-full object-contain"
+                        className="h-10 w-10 rounded-full"
                       />
 
                       <div>

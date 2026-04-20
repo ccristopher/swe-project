@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { PetAvatar } from "@/components/pet-avatar";
 import { Card } from "@/components/ui/card";
 
 export default function FriendProfilePage() {
@@ -56,10 +57,11 @@ export default function FriendProfilePage() {
             Friend Profile
           </p>
 
-          <img
-            src={data.pet?.imageID || "/gator....png"}
+          <PetAvatar
+            imageSrc={data.pet?.imageID || "/gator....png"}
+            equippedItems={data.pet?.equippedItems}
             alt="Pet"
-            className="image-pixel z-10 mx-auto h-32 w-32 object-contain"
+            className="z-10 mx-auto h-32 w-32"
           />
 
           <div className="absolute top-3 right-3 starBadge px-3 py-1 rounded-full text-sm z-10">
@@ -80,10 +82,11 @@ export default function FriendProfilePage() {
         <Card className="rounded-[2.5rem] bg-secondary-container p-6 flex flex-col items-center text-center">
           
           <div className="relative flex h-48 w-48 items-center justify-center">
-            <img
-              src={data.pet?.imageID || "/gator....png"}
+            <PetAvatar
+              imageSrc={data.pet?.imageID || "/gator....png"}
+              equippedItems={data.pet?.equippedItems}
               alt="Pet"
-              className="image-pixel h-48 w-48 object-contain"
+              className="h-48 w-48"
             />
           </div>
 
