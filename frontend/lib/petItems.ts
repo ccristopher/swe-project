@@ -118,3 +118,18 @@ export function validateEquippedItems(value: unknown, unlockedRewards: string[])
 
   return { ok: true, equippedItems: equipped };
 }
+
+export function pruneEquippedItemsToUnlockedRewards(value: unknown, unlockedRewards: string[]) {
+  const equipped = cleanEquippedItems(value);
+
+  for (const slot of petItemSlots) {
+    const itemId = equipped[slot];
+    const item = getPetItem(itemId);
+
+    if (!item || !unlockedRewards.includes(item.unlockReward)) {
+      equipped[slot] = null;
+    }
+  }
+
+  return equipped;
+}

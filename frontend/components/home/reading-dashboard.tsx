@@ -36,6 +36,10 @@ export function ReadingDashboard() {
     petEquippedItems,
     petImageSrc,
     recentBooks,
+    removeBookFromDashboard,
+    replacePetEquippedItems,
+    replaceUnlockedRewards,
+    syncUserProgress,
     totalBooks,
     totalPagesRead,
     updateBookInDashboard,
@@ -90,6 +94,7 @@ export function ReadingDashboard() {
                   author: currentRead.author,
                   completed: currentRead.completed,
                   coverUrl: currentRead.coverUrl,
+                  dnf: currentRead.dnf,
                   imageSrc: currentRead.coverSrc,
                   name: currentRead.name,
                   numberOfPages: currentRead.numberOfPages,
@@ -127,11 +132,18 @@ export function ReadingDashboard() {
                   ? data.newLevelRewards.filter((x: unknown) => typeof x === "string")
                   : [];
                 if (newLevelRewards.length) addUnlockedRewards(newLevelRewards);
+                if (Array.isArray(data?.unlockedRewards)) replaceUnlockedRewards(data.unlockedRewards);
+                if (data?.pet?.equippedItems) replacePetEquippedItems(data.pet.equippedItems);
+                if (data?.userProgress) syncUserProgress(data.userProgress);
 
-                updateBookInDashboard({
-                  _id: currentRead._id,
-                  pagesRead: Math.floor(pagesNum),
-                });
+                updateBookInDashboard(
+                  data?.book && typeof data.book === "object"
+                    ? data.book
+                    : {
+                        _id: currentRead._id,
+                        pagesRead: Math.floor(pagesNum),
+                      }
+                );
               }}
             />
 
@@ -162,10 +174,17 @@ export function ReadingDashboard() {
       <BookDetailsModal
         book={selectedBook}
         onCloseAction={() => setSelectedBook(null)}
+        onBookDeletedAction={(deletedBookId) => {
+          setSelectedBook(null);
+          removeBookFromDashboard(deletedBookId);
+        }}
         onBookUpdatedAction={(updatedBook, meta) => {
           setSelectedBook(updatedBook);
           updateBookInDashboard(updatedBook);
           if (meta?.newLevelRewards?.length) addUnlockedRewards(meta.newLevelRewards);
+          if (Array.isArray(meta?.unlockedRewards)) replaceUnlockedRewards(meta.unlockedRewards);
+          if (meta?.petEquippedItems) replacePetEquippedItems(meta.petEquippedItems);
+          if (meta?.userProgress) syncUserProgress(meta.userProgress);
         }}
       />
     </section>

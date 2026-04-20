@@ -33,7 +33,6 @@ export default function LogBookPage() {
       body: JSON.stringify({
         ...form,
         pageCount: Math.floor(pageCountNum),
-        completed: true,
       }),
     });
 

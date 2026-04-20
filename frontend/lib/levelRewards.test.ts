@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   rewardIdsForPagesGained,
+  rewardIdsForPages,
   rewardLabelForLevel,
   buildUserProgressUpdate,
   labelForRewardId,
@@ -17,6 +18,12 @@ describe("rewardIdsForPagesGained", () => {
 
   it("grants multiple when skipping levels", () => {
     expect(rewardIdsForPagesGained(0, 400)).toEqual(["lvl-2", "lvl-3"]);
+  });
+});
+
+describe("rewardIdsForPages", () => {
+  it("returns all rewards currently eligible at the user's total pages", () => {
+    expect(rewardIdsForPages(400)).toEqual(["lvl-2", "lvl-3"]);
   });
 });
 
@@ -38,6 +45,16 @@ describe("buildUserProgressUpdate", () => {
     const u = buildUserProgressUpdate(0, [
       { completed: true, numberOfPages: 200, pagesRead: 0 },
     ]);
+    expect(u.$set.unlockedRewards).toEqual(["lvl-2"]);
     expect(u.$addToSet?.unlockedRewards.$each).toContain("lvl-2");
+  });
+
+  it("replaces unlocked rewards when progress falls", () => {
+    const u = buildUserProgressUpdate(400, [
+      { completed: false, numberOfPages: 200, pagesRead: 100 },
+    ]);
+
+    expect(u.$set.unlockedRewards).toEqual([]);
+    expect(u.$addToSet).toBeUndefined();
   });
 });
