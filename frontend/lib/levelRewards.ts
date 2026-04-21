@@ -65,19 +65,8 @@ export function rewardIdsForPages(totalPages: number): string[] {
 
 export function buildUserProgressUpdate(oldTotalPages: number, booksAfter: BookForPages[]) {
   const { totalPagesRead, booksCompleted } = totalsFromBooks(booksAfter);
-  const newRewards = rewardIdsForPagesGained(oldTotalPages, totalPagesRead);
   const unlockedRewards = rewardIdsForPages(totalPagesRead);
-
-  const update: {
-    $set: Record<string, number | string[]>;
-    $addToSet?: { unlockedRewards: { $each: string[] } };
-  } = {
+  return {
     $set: { totalPagesRead, booksCompleted, unlockedRewards },
   };
-
-  if (newRewards.length > 0) {
-    update.$addToSet = { unlockedRewards: { $each: newRewards } };
-  }
-
-  return update;
 }
