@@ -41,12 +41,12 @@ describe("labelForRewardId", () => {
 });
 
 describe("buildUserProgressUpdate", () => {
-  it("includes addToSet when new rewards", () => {
+  it("sets unlockedRewards from totals", () => {
     const u = buildUserProgressUpdate(0, [
       { completed: true, numberOfPages: 200, pagesRead: 0 },
     ]);
     expect(u.$set.unlockedRewards).toEqual(["lvl-2"]);
-    expect(u.$addToSet?.unlockedRewards.$each).toContain("lvl-2");
+    expect("$addToSet" in u).toBe(false);
   });
 
   it("replaces unlocked rewards when progress falls", () => {
@@ -55,6 +55,6 @@ describe("buildUserProgressUpdate", () => {
     ]);
 
     expect(u.$set.unlockedRewards).toEqual([]);
-    expect(u.$addToSet).toBeUndefined();
+    expect("$addToSet" in u).toBe(false);
   });
 });

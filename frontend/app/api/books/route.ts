@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '@/lib/db/schema';
 import { canMarkBookCompleted, shouldAutoCompleteBook, sumPagesFromBooks } from '@/lib/readingProgress';
-import { buildUserProgressUpdate } from '@/lib/levelRewards';
+import { buildUserProgressUpdate, rewardIdsForPagesGained } from '@/lib/levelRewards';
 import { cleanEquippedItems, emptyEquippedItems, pruneEquippedItemsToUnlockedRewards } from '@/lib/petItems';
 const COVER_API = "https://bookcover.longitood.com/bookcover";
 
@@ -113,6 +113,8 @@ export async function POST(req: Request) {
     });
 
     const booksAfter = await books.find({ ownerId: dbUser._id }).toArray();
+    const newTotalPages = sumPagesFromBooks(booksAfter);
+    const newRewards = rewardIdsForPagesGained(oldTotalPages, newTotalPages);
     const userUpdate = buildUserProgressUpdate(oldTotalPages, booksAfter);
     await users.updateOne({ _id: dbUser._id }, userUpdate);
     const unlockedRewards = Array.isArray(userUpdate.$set.unlockedRewards)
@@ -134,8 +136,6 @@ export async function POST(req: Request) {
         }
       );
     }
-
-    const newRewards = userUpdate.$addToSet?.unlockedRewards.$each ?? [];
 
     return new Response(
       JSON.stringify({
