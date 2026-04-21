@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import initSchemas from "../../../../../backend/db/schema";
+import initSchemas from "@/lib/db/schema";
 
 function sanitizeUsername(input: unknown): string | null {
   if (typeof input !== "string") return null;

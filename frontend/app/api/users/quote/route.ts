@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import initSchemas from "../../../../../backend/db/schema";
+import initSchemas from "@/lib/db/schema";
 import { clampQuote } from "@/lib/quoteUtils";
 
 export async function PUT(req: Request) {

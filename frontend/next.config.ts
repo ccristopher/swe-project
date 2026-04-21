@@ -1,8 +1,7 @@
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
 
-const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const currentDir = fileURLToPath(new URL('.', import.meta.url));
 
 const nextConfig: NextConfig = {
   images: {
@@ -18,8 +17,7 @@ const nextConfig: NextConfig = {
     ],
   },
   turbopack: {
-    // Keep the repo root as Turbopack's root so frontend code can still resolve shared/backend files.
-    root: path.resolve(currentDir, '..'),
+    root: currentDir,
   },
 };
 
