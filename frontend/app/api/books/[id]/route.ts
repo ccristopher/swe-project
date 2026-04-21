@@ -1,3 +1,23 @@
+/** Hello this is Avi Patel aka firedog 1234)=
+* NOTE: this applies to both files books/route.ts and books/[id]/route.ts so i'll put it in both files
+*
+* I used Cursor to generate the base API routes for handling books get post patch delete,
+* then edited  some stuff.
+*
+* I added auth checks to make sure the user is signed in and ensured users can only access
+* their own books using ownerId
+*  I added validation for inputs like title, author, genre,
+* and pageCount and some validation for those,
+* and handled errors with status codes.
+*
+* I also updated how fields map to the database title to name, pageCount to numberOfPages
+* made the PATCH route only update provided fields instead of overwriting everything,
+* and added sorting to the GET route so newer books show first.
+*
+* https://www.sohamkamani.com/typescript/rest-http-api-call/
+*/
+
+
 import { auth } from '@clerk/nextjs/server';
 import initSchemas from '@/lib/db/schema';
 import { ObjectId } from 'mongodb';

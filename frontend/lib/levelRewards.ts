@@ -1,3 +1,18 @@
+/** Hello this is Avi Patel aka firedog 1234)=
+* I had cursor fill in the rewards so i could see 
+* if the rewards were actuallt wokring they used to be like random rewards like
+* 6: "Scholar bookmark", or whatever.
+* in short I wrote the initial reading progress logic and tests, 
+* Cursor refactored it into the utility functions after i asked for a code
+* review it caught a lot of bugs and issues and started refactoring stuff and after testing it worked, 
+* and I then integrated both into the existing frontend and backend.
+* This doesnt necessarily apply to this file but the ones in the pr that includes the level system which 
+* includes this file
+* cursor also helped with the page changes.
+* 
+* i do know it refactored readingprogress file heavily and then it worked
+*/
+
 import {
   READING_PAGES_PER_LEVEL,
   getLevelFromTotalPages,

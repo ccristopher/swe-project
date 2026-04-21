@@ -1,3 +1,15 @@
+/**
+* Hello this is Avi Patel aka firedog 1234
+* I worked on an existing API route originally written and updated it to improve
+* the implementation, including replacing the original request-based userId approach with Clerk
+* authentication  and use the database user _id
+* I then told Cursor to review my which refactored the route structure, cleaned up database access
+* using initSchemas instead of direct DB calls, and improved consistency in validation and changes some of the messages
+*
+* it also made some other change in some other file like formatting and it added some random md change for some reason
+* but i was using like 'git add .' unfortunately. oops
+*/
+
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import initSchemas from "@/lib/db/schema";
