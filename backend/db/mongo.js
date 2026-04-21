@@ -1,10 +1,27 @@
+const fs = require('fs');
 const path = require('path');
+const { createRequire } = require('module');
 
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '../backend/.env'),
-});
+// Load mongodb/dotenv from the package that owns node_modules for this process:
+// - Next/Vercel: cwd is frontend/
+// - backend/server.js: cwd is usually backend/
+// Plain require() from this file fails under Turbopack because resolution starts under backend/db/.
+const requireApp = createRequire(path.join(process.cwd(), 'package.json'));
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const envCandidates = [
+  path.resolve(process.cwd(), '..', 'backend', '.env'),
+  path.resolve(process.cwd(), 'backend', '.env'),
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(__dirname, '..', '.env'),
+];
+for (const envPath of envCandidates) {
+  if (fs.existsSync(envPath)) {
+    requireApp('dotenv').config({ path: envPath });
+    break;
+  }
+}
+
+const { MongoClient, ServerApiVersion } = requireApp('mongodb');
 
 const dbUser = encodeURIComponent(process.env.DB_USER || '');
 const dbPassword = encodeURIComponent(process.env.DB_PASSWORD || '');
