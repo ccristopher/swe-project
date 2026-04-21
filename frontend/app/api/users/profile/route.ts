@@ -1,4 +1,4 @@
-import connectDB from "../../../../../backend/db/mongo";
+import connectDB from "@/lib/db/mongo";
 import { ObjectId } from "mongodb";
 import { getLevelFromTotalPages } from "@/lib/readingProgress";
 import { cleanEquippedItems, emptyEquippedItems } from "@/lib/petItems";

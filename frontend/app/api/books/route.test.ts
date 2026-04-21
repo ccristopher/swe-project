@@ -8,7 +8,7 @@ vi.mock("@clerk/nextjs/server", () => ({
   auth: authMock,
 }));
 
-vi.mock("../../../../backend/db/schema", () => ({
+vi.mock("@/lib/db/schema", () => ({
   default: initSchemasMock,
 }));
 

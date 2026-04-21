@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import initSchemas from "../../../../../../backend/db/schema";
+import initSchemas from "@/lib/db/schema";
 import {
   cleanEquippedItems,
   emptyEquippedItems,
